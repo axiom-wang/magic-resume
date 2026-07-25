@@ -21,6 +21,8 @@ export interface ResumeTemplate {
     layout?: "left" | "center" | "right";
   };
   availableSections?: string[];
+  /** Applied when the template is selected / used for preview */
+  defaultFontFamily?: string;
 }
 
 export interface TemplateConfig {

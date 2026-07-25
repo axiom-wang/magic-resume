@@ -88,6 +88,9 @@ export const ResumeWorkbench = () => {
                             sectionSpacing: template.spacing.sectionGap,
                             paragraphSpacing: template.spacing.itemGap,
                             pagePadding: template.spacing.contentPadding,
+                            ...(template.defaultFontFamily
+                                ? { fontFamily: template.defaultFontFamily }
+                                : {}),
                         },
                         basic: {
                             ...resume.basic,

@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "release": "bumpp",
     "generate:template-snapshots": "tsx scripts/generate-template-snapshots.ts",
+    "export:resume-pdf": "tsx scripts/export-resume-pdf.ts",
     "install:playwright": "playwright install chromium"
   },
   "dependencies": {

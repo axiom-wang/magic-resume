@@ -48,14 +48,17 @@ const IframeTemplateViewer = () => {
   return (
     <div
       className={cn(
-        "w-full min-h-screen overflow-hidden bg-white",
+        "w-full min-h-screen overflow-hidden",
         isSnapshotMode ? "flex items-start justify-start p-0" : "flex items-start justify-center"
       )}
+      style={{
+        backgroundColor: template.colorScheme.background || "#ffffff",
+      }}
     >
       <div
         {...{ [TEMPLATE_SNAPSHOT_ROOT_ATTRIBUTE]: "" }}
         className={cn(
-          "bg-white relative origin-top-left",
+          "relative origin-top-left",
           isSnapshotMode ? "" : "mx-auto"
         )}
         style={{
@@ -68,6 +71,7 @@ const IframeTemplateViewer = () => {
           overflow: "hidden",
           fontFamily: selectedFontFamily,
           padding: `${template.spacing.contentPadding}px`,
+          backgroundColor: template.colorScheme.background || "#ffffff",
         }}
       >
         <ResumeTemplateComponent data={mockData} template={template} />

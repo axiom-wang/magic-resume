@@ -3,7 +3,8 @@ import { getFontFaceCss, normalizeFontFamily } from "@/utils/fonts";
 export const exportResumeToBrowserPrint = async (
   resumeContent: HTMLElement,
   pagePadding: number,
-  fontFamily?: string
+  fontFamily?: string,
+  backgroundColor = "#ffffff"
 ) => {
   const printFrame = document.createElement("iframe");
   printFrame.style.position = "absolute";
@@ -27,6 +28,7 @@ export const exportResumeToBrowserPrint = async (
 
     const clonedContent = resumeContent.cloneNode(true) as HTMLElement;
     const selectedFontFamily = normalizeFontFamily(fontFamily);
+    const pageBackground = backgroundColor || "#ffffff";
     const transformValue = clonedContent.style.transform || "";
     const match = transformValue.match(/scale\(([\d.]+)\)/);
     if (match) {
@@ -41,6 +43,8 @@ export const exportResumeToBrowserPrint = async (
     }
 
     clonedContent.style.setProperty("font-family", selectedFontFamily, "important");
+    clonedContent.style.setProperty("background", pageBackground, "important");
+    clonedContent.style.setProperty("background-color", pageBackground, "important");
     const fontFaceStyles = await getFontFaceCss(selectedFontFamily);
 
     const htmlContent = `
@@ -63,7 +67,7 @@ export const exportResumeToBrowserPrint = async (
               margin: 0;
               padding: 0;
               width: 100%;
-              background: white !important;
+              background: ${pageBackground} !important;
               height: auto !important;
               overflow: visible !important;
             }
@@ -79,14 +83,14 @@ export const exportResumeToBrowserPrint = async (
               -webkit-box-decoration-break: clone;
               box-decoration-break: clone;
               font-family: ${selectedFontFamily} !important;
-              background: white !important;
+              background: ${pageBackground} !important;
             }
 
             #print-content {
               width: 210mm;
               margin: 0 auto;
               padding: 0;
-              background: white;
+              background: ${pageBackground};
               box-shadow: none;
             }
             #print-content * {

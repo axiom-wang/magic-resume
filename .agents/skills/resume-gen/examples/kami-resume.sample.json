@@ -1,0 +1,103 @@
+{
+  "title": "示例-AI产品实习-王炎",
+  "templateId": "kami",
+  "basic": {
+    "name": "王炎",
+    "title": "AI 产品实习生",
+    "employementStatus": "在校-求职中",
+    "email": "example@nju.edu.cn",
+    "phone": "13800000000",
+    "location": "南京 / 可远程",
+    "birthDate": "",
+    "layout": "left",
+    "fieldOrder": [
+      { "id": "1", "key": "name", "label": "姓名", "type": "text", "visible": true },
+      { "id": "2", "key": "title", "label": "职位", "type": "text", "visible": true },
+      { "id": "3", "key": "employementStatus", "label": "状态", "type": "text", "visible": false },
+      { "id": "4", "key": "birthDate", "label": "生日", "type": "date", "visible": false },
+      { "id": "5", "key": "email", "label": "邮箱", "type": "text", "visible": true },
+      { "id": "6", "key": "phone", "label": "电话", "type": "text", "visible": true },
+      { "id": "7", "key": "location", "label": "所在地", "type": "text", "visible": true }
+    ],
+    "icons": {
+      "email": "Mail",
+      "phone": "Phone",
+      "birthDate": "CalendarRange",
+      "employementStatus": "Briefcase",
+      "location": "MapPin"
+    },
+    "photo": "",
+    "photoConfig": {
+      "width": 90,
+      "height": 120,
+      "aspectRatio": "1:1",
+      "borderRadius": "none",
+      "customBorderRadius": 0,
+      "visible": false
+    },
+    "customFields": [],
+    "githubKey": "",
+    "githubUseName": "",
+    "githubContributionsVisible": false
+  },
+  "education": [
+    {
+      "id": "edu1",
+      "school": "南京大学",
+      "major": "国际经济与贸易",
+      "degree": "本科",
+      "startDate": "2022-09",
+      "endDate": "2026-06",
+      "gpa": "",
+      "visible": true,
+      "description": "<ul><li>课程与奖项按经历库压缩填写；本行为 smoke-test 占位，生成正式简历时替换为真实表述</li></ul>"
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp1",
+      "company": "示例公司 · Deepwisdom",
+      "position": "AI 产品实习",
+      "date": "2025.06 - 2025.09",
+      "visible": true,
+      "details": "<ul><li>参与 Agent 产品需求澄清与评测集设计，覆盖核心工作流场景</li><li>推动 Prompt / Harness 迭代，缩短评测反馈周期</li></ul>"
+    }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "name": "Vibe Coding / 个人站点",
+      "role": "独立负责",
+      "date": "2025.01 - 2025.06",
+      "visible": true,
+      "description": "<ul><li>搭建面向求职场景的个人作品站点与转化漏斗</li><li>沉淀可复用的 Agent / 简历工作流组件</li></ul>"
+    }
+  ],
+  "skillContent": "<ul><li>产品：需求分析、PRD、用户访谈、竞品拆解</li><li>AI：Prompt、Agent 工作流、RAG / 评测集设计</li><li>工具：Figma、SQL、Python 基础数据分析</li></ul>",
+  "selfEvaluationContent": "",
+  "menuSections": [
+    { "id": "basic", "title": "基本信息", "icon": "User", "enabled": true, "order": 0 },
+    { "id": "experience", "title": "实习经历", "icon": "Briefcase", "enabled": true, "order": 1 },
+    { "id": "projects", "title": "项目经历", "icon": "FolderKanban", "enabled": true, "order": 2 },
+    { "id": "education", "title": "教育经历", "icon": "GraduationCap", "enabled": true, "order": 3 },
+    { "id": "skills", "title": "专业技能", "icon": "Sparkles", "enabled": true, "order": 4 }
+  ],
+  "certificates": [],
+  "customData": {},
+  "activeSection": "basic",
+  "draggingProjectId": null,
+  "globalSettings": {
+    "themeColor": "#1B365D",
+    "fontFamily": "\"TsangerJinKai02\", \"Source Han Serif SC\", \"Noto Serif SC\", \"Songti SC\", \"STSong\", Georgia, serif",
+    "baseFontSize": 13,
+    "pagePadding": 40,
+    "paragraphSpacing": 14,
+    "lineHeight": 1.5,
+    "sectionSpacing": 22,
+    "headerSize": 17,
+    "subheaderSize": 15,
+    "useIconMode": false,
+    "centerSubtitle": false,
+    "autoOnePage": true
+  }
+}

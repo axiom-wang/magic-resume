@@ -254,6 +254,10 @@
       "swiss": {
         "name": "Swiss Aesthetic",
         "description": "Artistic Bauhaus layout with strong typographic hierarchy and geometric accents, showing modern minimalism"
+      },
+      "kami": {
+        "name": "Kami",
+        "description": "Warm parchment canvas with ink-blue accents and serif editorial typography — quiet, formal, print-ready"
       }
     }
   },
@@ -360,7 +364,8 @@
           "misans": "MiSans",
           "notosanssc": "Noto Sans SC",
           "sourcehanserifsc": "Source Han Serif SC",
-          "note": "MiSans is used under its free commercial license. Keep MiSans attribution when distributing this project."
+          "tsangerjinkai": "Tsanger JinKai",
+          "note": "MiSans is free for commercial use under its license. Tsanger JinKai is for non-commercial use only. Keep font attribution when distributing this project."
         },
         "lineHeight": {
           "title": "Line Height",

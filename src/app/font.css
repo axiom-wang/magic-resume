@@ -77,3 +77,20 @@
   font-style: normal;
   font-display: swap;
 }
+
+/* Kami · 仓耳今楷 — W04 regular / W05 medium (non-commercial use) */
+@font-face {
+  font-family: "TsangerJinKai02";
+  src: url("/fonts/TsangerJinKai02-W04.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "TsangerJinKai02";
+  src: url("/fonts/TsangerJinKai02-W05.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}

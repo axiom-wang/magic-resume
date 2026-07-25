@@ -149,6 +149,9 @@ const TemplateThumbnail = ({
             sectionSpacing: template.spacing?.sectionGap || 16,
             paragraphSpacing: template.spacing?.itemGap || 8,
             pagePadding: template.spacing?.contentPadding || 32,
+            ...(template.defaultFontFamily
+                ? { fontFamily: template.defaultFontFamily }
+                : {}),
         },
         basic: {
             ...initialResumeState.basic,
@@ -159,7 +162,13 @@ const TemplateThumbnail = ({
     };
 
     return (
-        <div className="w-full h-full overflow-hidden bg-white flex items-center justify-center" ref={containerRef}>
+        <div
+            className="w-full h-full overflow-hidden flex items-center justify-center"
+            ref={containerRef}
+            style={{
+                backgroundColor: template.colorScheme?.background || "#ffffff",
+            }}
+        >
             {/* Wrapper to hold the exact scaled dimensions so flexbox layout is preserved without absolute positioning */}
             <div
                 style={{
@@ -169,13 +178,14 @@ const TemplateThumbnail = ({
                 className="flex-shrink-0"
             >
                 <div
-                    className="bg-white origin-top-left pointer-events-none"
+                    className="origin-top-left pointer-events-none"
                     style={{
                         width: "210mm",
                         height: "297mm",
                         transform: `scale(${scale})`,
                         padding: `${template.spacing?.contentPadding || 32}px`,
                         fontFamily: normalizeFontFamily(previewData.globalSettings?.fontFamily),
+                        backgroundColor: template.colorScheme?.background || "#ffffff",
                     }}
                 >
                     <ResumeTemplateComponent

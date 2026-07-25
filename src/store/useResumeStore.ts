@@ -795,6 +795,9 @@ export const useResumeStore = create(
             sectionSpacing: template.spacing.sectionGap,
             paragraphSpacing: template.spacing.itemGap,
             pagePadding: template.spacing.contentPadding,
+            ...(template.defaultFontFamily
+              ? { fontFamily: template.defaultFontFamily }
+              : {}),
           },
           basic: {
             ...resumes[activeResumeId].basic,

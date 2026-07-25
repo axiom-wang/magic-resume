@@ -131,6 +131,33 @@ const FONT_DEFINITIONS: FontDefinition[] = [
         style: "normal"
       }
     ]
+  },
+  {
+    labelKey: "tsangerjinkai",
+    value:
+      '"TsangerJinKai02", "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", Georgia, serif',
+    aliases: [
+      '"TsangerJinKai02", "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", Georgia, serif',
+      '"TsangerJinKai02", "Source Han Serif SC", "Noto Serif SC", serif',
+      "TsangerJinKai02, serif",
+      "TsangerJinKai02"
+    ],
+    sources: [
+      {
+        family: "TsangerJinKai02",
+        url: "/fonts/TsangerJinKai02-W04.ttf",
+        format: "truetype",
+        weight: "400",
+        style: "normal"
+      },
+      {
+        family: "TsangerJinKai02",
+        url: "/fonts/TsangerJinKai02-W05.ttf",
+        format: "truetype",
+        weight: "500",
+        style: "normal"
+      }
+    ]
   }
 ];
 

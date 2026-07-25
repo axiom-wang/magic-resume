@@ -19,6 +19,7 @@ const PREVIEW_MODAL_SCALE = 0.529166667;
 
 const PRESET_COLORS = [
   { name: "default", value: "" },
+  { name: "ink", value: "#1B365D" },
   { name: "blue", value: "#3b82f6" },
   { name: "green", value: "#10b981" },
   { name: "purple", value: "#8b5cf6" },
@@ -51,6 +52,9 @@ const buildTemplatePreviewData = (
     sectionSpacing: template.spacing.sectionGap,
     paragraphSpacing: template.spacing.itemGap,
     pagePadding: template.spacing.contentPadding,
+    ...(template.defaultFontFamily
+      ? { fontFamily: template.defaultFontFamily }
+      : {}),
   },
   basic: {
     ...baseData.basic,
@@ -130,9 +134,14 @@ const TemplateCardItem = ({
             className="absolute inset-0 pb-6 flex items-center justify-center pointer-events-none transition-transform duration-300 group-hover:scale-[1.02] overflow-hidden"
             ref={containerRef}
           >
-            <div className="w-full h-full relative origin-top bg-white">
+            <div
+              className="w-full h-full relative origin-top"
+              style={{
+                backgroundColor: template.colorScheme.background || "#ffffff",
+              }}
+            >
               <div
-                className="resume-preview absolute top-0 left-0 bg-white"
+                className="resume-preview absolute top-0 left-0"
                 style={{
                   width: "210mm",
                   height: "297mm",
@@ -140,6 +149,7 @@ const TemplateCardItem = ({
                   transformOrigin: "top left",
                   padding: `${template.spacing.contentPadding}px`,
                   fontFamily: normalizeFontFamily(previewData.globalSettings?.fontFamily),
+                  backgroundColor: template.colorScheme.background || "#ffffff",
                 }}
               >
                 <ResumeTemplateComponent data={previewData} template={template} />
@@ -256,6 +266,9 @@ const TemplatesPage = () => {
           sectionSpacing: template.spacing.sectionGap,
           paragraphSpacing: template.spacing.itemGap,
           pagePadding: template.spacing.contentPadding,
+          ...(template.defaultFontFamily
+            ? { fontFamily: template.defaultFontFamily }
+            : {}),
         },
         basic: {
           ...resume.basic,
@@ -342,17 +355,26 @@ const TemplatesPage = () => {
                   </div>
                   <div className="overflow-hidden flex items-center justify-center bg-gray-50 dark:bg-gray-950 py-8 pointer-events-none">
                     <div
-                      className="relative bg-white shadow-md ring-1 ring-gray-200/50 overflow-hidden"
-                      style={{ width: "420px", height: "594px" }}
+                      className="relative shadow-md ring-1 ring-gray-200/50 overflow-hidden"
+                      style={{
+                        width: "420px",
+                        height: "594px",
+                        backgroundColor:
+                          activePreviewTemplate.colorScheme.background ||
+                          "#ffffff",
+                      }}
                     >
                       <div
-                        className="resume-preview absolute top-0 left-0 bg-white"
+                        className="resume-preview absolute top-0 left-0"
                         style={{
                           width: "210mm",
                           height: "297mm",
                           transform: `scale(${PREVIEW_MODAL_SCALE})`,
                           transformOrigin: "top left",
                           padding: `${activePreviewTemplate.spacing.contentPadding}px`,
+                          backgroundColor:
+                            activePreviewTemplate.colorScheme.background ||
+                            "#ffffff",
                           fontFamily: normalizeFontFamily(
                             buildTemplatePreviewData(
                               baseData,

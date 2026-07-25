@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { exportResumeAsJson, exportResumeAsMarkdown, exportToPdf } from "@/utils/export";
 import { exportResumeToBrowserPrint } from "@/utils/print";
 import { cn } from "@/lib/utils";
+import { DEFAULT_TEMPLATES } from "@/config";
 import {
   Dialog,
   DialogContent,
@@ -86,9 +87,13 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
   const [isExportingJson, setIsExportingJson] = useState(false);
   const [isExportingMarkdown, setIsExportingMarkdown] = useState(false);
   const { activeResume } = useResumeStore();
-  const { globalSettings = {}, title } = activeResume || {};
+  const { globalSettings = {}, title, templateId } = activeResume || {};
   const t = useTranslations("pdfExport");
   const tBasicField = useTranslations("workbench.basicPanel.basicFields");
+
+  const pageBackground =
+    DEFAULT_TEMPLATES.find((template) => template.id === templateId)
+      ?.colorScheme.background || "#ffffff";
 
   const handleExport = async () => {
     await exportToPdf({
@@ -96,6 +101,7 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
       title: title || "resume",
       pagePadding: globalSettings?.pagePadding || 0,
       fontFamily: globalSettings?.fontFamily,
+      backgroundColor: pageBackground,
       onStart: () => setIsExporting(true),
       onEnd: () => setIsExporting(false),
       successMessage: t("toast.success"),
@@ -149,7 +155,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
       await exportResumeToBrowserPrint(
         resumeContent,
         pagePadding,
-        globalSettings?.fontFamily
+        globalSettings?.fontFamily,
+        pageBackground
       );
     } finally {
       setIsPrinting(false);

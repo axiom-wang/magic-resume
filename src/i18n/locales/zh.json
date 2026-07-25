@@ -255,6 +255,10 @@
       "swiss": {
         "name": "瑞士美学",
         "description": "极具艺术感的包豪斯国际排版，超粗字重对比与几何色块点缀，彰显理性与高级"
+      },
+      "kami": {
+        "name": "紙 · Kami",
+        "description": "暖羊皮纸底与墨蓝点缀的编辑风衬线排版，安静克制、适合正式投递"
       }
     }
   },
@@ -314,7 +318,8 @@
           "misans": "MiSans",
           "notosanssc": "Noto Sans SC",
           "sourcehanserifsc": "思源宋体",
-          "note": "MiSans 依据其许可免费商用；使用本项目时请保留 MiSans 字体说明。"
+          "tsangerjinkai": "仓耳今楷",
+          "note": "MiSans 依据其许可免费商用；仓耳今楷仅限非商用。使用本项目时请保留字体说明。"
         },
         "lineHeight": {
           "title": "行高",

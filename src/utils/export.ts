@@ -100,6 +100,7 @@ export interface ExportToPdfOptions {
   title: string;
   pagePadding: number;
   fontFamily?: string;
+  backgroundColor?: string;
   onStart?: () => void;
   onEnd?: () => void;
   successMessage?: string;
@@ -179,6 +180,7 @@ export const exportToPdf = async ({
   title,
   pagePadding,
   fontFamily,
+  backgroundColor = "#ffffff",
   onStart,
   onEnd,
   successMessage,
@@ -195,6 +197,7 @@ export const exportToPdf = async ({
 
     const clonedElement = pdfElement.cloneNode(true) as HTMLElement;
     const selectedFontFamily = normalizeFontFamily(fontFamily);
+    const pageBackground = backgroundColor || "#ffffff";
     const transformValue = clonedElement.style.transform || "";
     const scaleMatch = transformValue.match(/scale\(([\d.]+)\)/);
     
@@ -214,6 +217,8 @@ export const exportToPdf = async ({
     clonedElement.style.setProperty("padding", "0", "important");
     clonedElement.style.setProperty("box-sizing", "border-box");
     clonedElement.style.setProperty("font-family", selectedFontFamily, "important");
+    clonedElement.style.setProperty("background", pageBackground, "important");
+    clonedElement.style.setProperty("background-color", pageBackground, "important");
 
     const pageBreakLines = clonedElement.querySelectorAll<HTMLElement>(".page-break-line");
     pageBreakLines.forEach((line) => {
@@ -228,10 +233,10 @@ export const exportToPdf = async ({
     // 注入 PdfExport.tsx 中的样式增强
     const styles = `
       ${capturedStyles}
-      html, body { background: white !important; background-color: white !important; }
+      html, body { background: ${pageBackground} !important; background-color: ${pageBackground} !important; }
       html, body, #${elementId} {
-        background: white !important;
-        background-color: white !important;
+        background: ${pageBackground} !important;
+        background-color: ${pageBackground} !important;
         font-family: ${selectedFontFamily} !important;
       }
     `;

@@ -57,6 +57,12 @@ const PhotoConfigDrawer: React.FC<Props> = ({
   );
   const [isMobile, setIsMobile] = useState(false);
 
+  /** Uploading/setting a photo should show it in the resume preview. */
+  const withPhotoVisible = (next: PhotoConfig): PhotoConfig => ({
+    ...next,
+    visible: true,
+  });
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -128,9 +134,13 @@ const PhotoConfigDrawer: React.FC<Props> = ({
 
       setPreviewUrl(imageData);
       setImageUrl(imageData);
+      const nextConfig = withPhotoVisible(config);
+      setConfig(nextConfig);
       updateBasicInfo({
         photo: imageData,
+        photoConfig: nextConfig,
       });
+      onConfigChange(nextConfig);
     } catch (error) {
       toast.error(t("upload.error"));
     }
@@ -198,10 +208,13 @@ const PhotoConfigDrawer: React.FC<Props> = ({
       });
 
       setPreviewUrl(proxyUrl);
+      const nextConfig = withPhotoVisible(config);
+      setConfig(nextConfig);
       updateBasicInfo({
         photo: url,
+        photoConfig: nextConfig,
       });
-      onPhotoChange(url, config);
+      onPhotoChange(url, nextConfig);
     } catch (error) {
       toast.error(
         t("upload.invalidUrl", {
@@ -311,7 +324,11 @@ const PhotoConfigDrawer: React.FC<Props> = ({
   };
 
   const handleSave = () => {
-    onPhotoChange(previewUrl, config);
+    const nextConfig =
+      previewUrl && previewUrl !== ""
+        ? withPhotoVisible(config)
+        : config;
+    onPhotoChange(previewUrl, nextConfig);
     onClose();
   };
   return (

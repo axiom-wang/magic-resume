@@ -209,10 +209,12 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
             ref={startRef}
             className={cn(
               "w-[210mm] min-w-[210mm] min-h-[297mm]",
-              "bg-white",
               "shadow-lg",
               "relative mx-auto"
             )}
+            style={{
+              backgroundColor: template.colorScheme.background || "#ffffff",
+            }}
           >
             <div
               ref={resumeContentRef}
@@ -221,6 +223,7 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
               style={{
                 fontFamily: selectedFontFamily,
                 padding: `${activeResume.globalSettings?.pagePadding}px`,
+                backgroundColor: template.colorScheme.background || "#ffffff",
                 ...(isScaled
                   ? {
                     transform: `scale(${scaleFactor})`,
