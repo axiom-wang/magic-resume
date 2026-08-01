@@ -16,7 +16,7 @@ description: Generate a job-targeted resume for 王炎 by matching a role/JD aga
 | Language | 中文 (`zh`) |
 | Pages | 1 |
 | Template | `kami`（仅当用户选默认 / 卡片预选项） |
-| Experience source | `C:\Users\24853\Desktop\申请材料\简历\王炎-经历总览.md` |
+| Experience source | `~/Library/Mobile Documents/com~apple~CloudDocs/简历/王炎-经历总览.md` |
 | Output dir | `output/<公司或角色>-<岗位>-王炎/` |
 | Deliverables | `resume.json` + `resume.pdf` |
 | Photo | 不放 |
@@ -27,7 +27,7 @@ description: Generate a job-targeted resume for 王炎 by matching a role/JD aga
 
 - Prefer: company + job title + JD (or bullets).
 - **Do not** start matching/writing until intake is done for all *unanswered* required knobs (template always required unless already named).
-- Use Cursor **question cards** (`AskQuestion`), not a long prose questionnaire. Full question list: [intake.md](intake.md).
+- Use the host agent's **question card** tool (Cursor `AskQuestion` / WorkBuddy `AskUserQuestion`), not a long prose questionnaire. Full question list: [intake.md](intake.md).
 
 ## Workflow
 

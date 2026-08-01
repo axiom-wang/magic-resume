@@ -1,6 +1,10 @@
 import { toast } from "sonner";
 import { PDF_EXPORT_CONFIG } from "@/config";
-import { normalizeFontFamily } from "@/utils/fonts";
+import {
+  ensureFontLoaded,
+  getRemoteFontFaceCss,
+  normalizeFontFamily
+} from "@/utils/fonts";
 import { ResumeData } from "@/types/resume";
 import { generateResumeMarkdown, ResumeMarkdownOptions } from "@/utils/markdown";
 
@@ -43,15 +47,17 @@ export const getOptimizedStyles = () => {
             if (styleCache.has(ruleText)) return false;
             styleCache.set(ruleText, true);
 
+            // 本地 @font-face 会在导出时按绝对 URL 重新注入，这里先剔除避免重复；
+            // 但远程字体表（Google Fonts 等）无法被服务端解析，需要直接丢弃。
             if (rule instanceof CSSFontFaceRule) return false;
             if (rule instanceof CSSImportRule) return false;
             if (normalizedRuleText.includes("fonts.googleapis.com")) return false;
             if (normalizedRuleText.includes("fonts.gstatic.com")) return false;
-            if (ruleText.includes("font-family")) return false;
-            if (ruleText.includes("@keyframes")) return false;
-            if (ruleText.includes("animation")) return false;
-            if (ruleText.includes("transition")) return false;
-            if (ruleText.includes("hover")) return false;
+            // 动画/过渡在静态 PDF 中无意义，且可能残留中间态
+            if (normalizedRuleText.includes("@keyframes")) return false;
+            if (normalizedRuleText.includes("animation")) return false;
+            if (normalizedRuleText.includes("transition")) return false;
+            if (normalizedRuleText.includes(":hover")) return false;
             return true;
           })
           .map((rule) => rule.cssText)
@@ -99,6 +105,7 @@ export interface ExportToPdfOptions {
   elementId: string;
   title: string;
   pagePadding: number;
+  verticalPageMarginShift?: number;
   fontFamily?: string;
   backgroundColor?: string;
   onStart?: () => void;
@@ -179,6 +186,7 @@ export const exportToPdf = async ({
   elementId,
   title,
   pagePadding,
+  verticalPageMarginShift = 0,
   fontFamily,
   backgroundColor = "#ffffff",
   onStart,
@@ -195,9 +203,21 @@ export const exportToPdf = async ({
       throw new Error(`PDF element #${elementId} not found`);
     }
 
-    const clonedElement = pdfElement.cloneNode(true) as HTMLElement;
     const selectedFontFamily = normalizeFontFamily(fontFamily);
+
+    // 必须先等字体就绪再克隆：否则克隆时的布局仍按回退字体计算，
+    // 会与预览产生字宽/行高偏差，进而导致分页错位。
+    await ensureFontLoaded(selectedFontFamily);
+
+    const clonedElement = pdfElement.cloneNode(true) as HTMLElement;
     const pageBackground = backgroundColor || "#ffffff";
+    const safeVerticalPageMarginShift = Math.max(
+      -pagePadding,
+      Math.min(pagePadding, verticalPageMarginShift)
+    );
+    const pageMarginTop = pagePadding + safeVerticalPageMarginShift;
+    const pageMarginBottom = pagePadding - safeVerticalPageMarginShift;
+    const hasAsymmetricPageMargins = safeVerticalPageMarginShift !== 0;
     const transformValue = clonedElement.style.transform || "";
     const scaleMatch = transformValue.match(/scale\(([\d.]+)\)/);
     
@@ -230,15 +250,46 @@ export const exportToPdf = async ({
       optimizeImages(clonedElement)
     ]);
 
+    // 服务端无法解析相对路径，改用绝对 URL 让 puppeteer 回源拉取字体
+    const fontFaceStyles = getRemoteFontFaceCss(selectedFontFamily);
+
     // 注入 PdfExport.tsx 中的样式增强
     const styles = `
+      ${fontFaceStyles}
       ${capturedStyles}
+      /* Puppeteer 的 PDF margin 位于 html/body 画布之外，需给页面盒本身着色；
+         否则 Kami 的羊皮纸底会在四周露出白边。 */
+      @page {
+        ${
+          hasAsymmetricPageMargins
+            ? `margin: ${pageMarginTop}px ${pagePadding}px ${pageMarginBottom}px;`
+            : ""
+        }
+        background: ${pageBackground};
+      }
       html, body { background: ${pageBackground} !important; background-color: ${pageBackground} !important; }
       html, body, #${elementId} {
         background: ${pageBackground} !important;
         background-color: ${pageBackground} !important;
         font-family: ${selectedFontFamily} !important;
       }
+      /* 保留模板底色与主题色，避免 PDF 渲染时被优化成纯白 */
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      /* 预览用的整页最小高度会在 PDF 中撑出多余空白页，需中和 */
+      #${elementId} .min-h-screen,
+      #${elementId} .min-h-full,
+      #${elementId} [class*="min-h-["],
+      #${elementId} [style*="min-height"] {
+        min-height: 0 !important;
+      }
+      /* 预览态的交互反馈不应出现在成品 PDF 中 */
+      #${elementId} * {
+        box-shadow: none !important;
+      }
+      .page-break-line { display: none !important; }
     `;
 
     const response = await fetch(PDF_EXPORT_CONFIG.SERVER_URL, {
@@ -249,7 +300,8 @@ export const exportToPdf = async ({
       body: JSON.stringify({
         content: clonedElement.outerHTML,
         styles,
-        margin: pagePadding
+        // 自定义上下边距由 @page 精确控制；其他模板继续使用服务端原有边距逻辑。
+        margin: hasAsymmetricPageMargins ? 0 : pagePadding
       }),
       mode: "cors",
       signal: AbortSignal.timeout(PDF_EXPORT_CONFIG.TIMEOUT)

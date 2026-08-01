@@ -23,6 +23,7 @@ import {
   MarkdownGlassIcon,
 } from "./GlassIcons";
 
+const KAMI_VERTICAL_PAGE_MARGIN_SHIFT = 8;
 
 const ExportCard = ({
   icon: Icon,
@@ -94,12 +95,15 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
   const pageBackground =
     DEFAULT_TEMPLATES.find((template) => template.id === templateId)
       ?.colorScheme.background || "#ffffff";
+  const verticalPageMarginShift =
+    templateId === "kami" ? KAMI_VERTICAL_PAGE_MARGIN_SHIFT : 0;
 
   const handleExport = async () => {
     await exportToPdf({
       elementId: "resume-preview",
       title: title || "resume",
       pagePadding: globalSettings?.pagePadding || 0,
+      verticalPageMarginShift,
       fontFamily: globalSettings?.fontFamily,
       backgroundColor: pageBackground,
       onStart: () => setIsExporting(true),
@@ -156,7 +160,8 @@ const PdfExport = ({ children }: { children?: React.ReactNode }) => {
         resumeContent,
         pagePadding,
         globalSettings?.fontFamily,
-        pageBackground
+        pageBackground,
+        verticalPageMarginShift
       );
     } finally {
       setIsPrinting(false);

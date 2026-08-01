@@ -15,6 +15,15 @@ type FontDefinition = {
 
 export const DEFAULT_FONT_FAMILY = "\"Alibaba PuHuiTi\", sans-serif";
 
+/**
+ * 远端 PDF 服务无法访问 localhost，也不适合把 18MB 级中文字体内联进请求体。
+ * 默认使用当前仓库固定提交中的公共字体资源；部署环境可通过变量切换到自有 CDN。
+ */
+const PDF_FONT_ASSET_BASE_URL = (
+  import.meta.env.VITE_PDF_FONT_ASSET_BASE_URL ||
+  "https://cdn.jsdelivr.net/gh/axiom-wang/magic-resume@ca40a344494653820b938d9b728be4109708cf1f/public"
+).replace(/\/$/, "");
+
 const FONT_DEFINITIONS: FontDefinition[] = [
   {
     labelKey: "alibaba",
@@ -61,7 +70,7 @@ const FONT_DEFINITIONS: FontDefinition[] = [
       },
       {
         family: "MiSans",
-        url: "/fonts/MiSans-Bold.ttf",
+        url: "/fonts/MiSans-Medium.ttf",
         format: "truetype",
         weight: "700",
         style: "normal"
@@ -238,4 +247,47 @@ export const getFontFaceCss = async (
   );
 
   return rules.join("\n");
+};
+
+/**
+ * 生成用于服务端 PDF 渲染的 @font-face 规则。
+ *
+ * 服务端（puppeteer）与前端不同源，相对路径 `/fonts/*.ttf` 无法解析；
+ * 而中文字体单个文件可达 18MB，base64 内联会让请求体突破体积上限。
+ * 因此这里统一改写为远端可访问的绝对 URL，由服务端按需回源下载。
+ */
+export const getRemoteFontFaceCss = (fontFamily?: string) => {
+  const definition = findFontDefinition(fontFamily);
+
+  return definition.sources
+    .map((source) => {
+      const absoluteUrl = source.url.startsWith("http")
+        ? source.url
+        : `${PDF_FONT_ASSET_BASE_URL}${
+            source.url.startsWith("/") ? source.url : `/${source.url}`
+          }`;
+      return buildFontFaceRule(source, absoluteUrl);
+    })
+    .join("\n");
+};
+
+/**
+ * 等待指定字体真正加载完成。
+ * 导出前必须确保字体已就绪，否则克隆出的 DOM 会按回退字体的字宽/行高排版，
+ * 与预览产生偏差（实测标题行高相差 6px，逐段累积会造成分页错位）。
+ */
+export const ensureFontLoaded = async (fontFamily?: string) => {
+  if (typeof document === "undefined" || !document.fonts) return;
+
+  const definition = findFontDefinition(fontFamily);
+
+  await Promise.all(
+    definition.sources.map((source) =>
+      document.fonts
+        .load(`${source.weight} 16px "${source.family}"`)
+        .catch(() => undefined)
+    )
+  );
+
+  await document.fonts.ready.catch(() => undefined);
 };

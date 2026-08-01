@@ -1,10 +1,11 @@
-import { getFontFaceCss, normalizeFontFamily } from "@/utils/fonts";
+import { ensureFontLoaded, getFontFaceCss, normalizeFontFamily } from "@/utils/fonts";
 
 export const exportResumeToBrowserPrint = async (
   resumeContent: HTMLElement,
   pagePadding: number,
   fontFamily?: string,
-  backgroundColor = "#ffffff"
+  backgroundColor = "#ffffff",
+  verticalPageMarginShift = 0
 ) => {
   const printFrame = document.createElement("iframe");
   printFrame.style.position = "absolute";
@@ -26,9 +27,19 @@ export const exportResumeToBrowserPrint = async (
   try {
     iframeWindow.document.open();
 
-    const clonedContent = resumeContent.cloneNode(true) as HTMLElement;
     const selectedFontFamily = normalizeFontFamily(fontFamily);
+
+    // 与导出保持一致：先确保字体就绪，再克隆，避免按回退字体计算布局
+    await ensureFontLoaded(selectedFontFamily);
+
+    const clonedContent = resumeContent.cloneNode(true) as HTMLElement;
     const pageBackground = backgroundColor || "#ffffff";
+    const safeVerticalPageMarginShift = Math.max(
+      -pagePadding,
+      Math.min(pagePadding, verticalPageMarginShift)
+    );
+    const pagePaddingTop = pagePadding + safeVerticalPageMarginShift;
+    const pagePaddingBottom = pagePadding - safeVerticalPageMarginShift;
     const transformValue = clonedContent.style.transform || "";
     const match = transformValue.match(/scale\(([\d.]+)\)/);
     if (match) {
@@ -59,6 +70,7 @@ export const exportResumeToBrowserPrint = async (
               size: A4;
               margin: 0;
               padding: 0;
+              background: ${pageBackground};
             }
             * {
               box-sizing: border-box;
@@ -70,16 +82,29 @@ export const exportResumeToBrowserPrint = async (
               background: ${pageBackground} !important;
               height: auto !important;
               overflow: visible !important;
+              position: relative;
+              isolation: isolate;
             }
             body {
               font-family: ${selectedFontFamily};
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
+            /* 系统打印关闭“背景图形”时，@page 背景可能不覆盖最后一页的空白区。
+               fixed 伪元素会在每个打印页重复，确保整页保持模板底色。 */
+            body::before {
+              content: "";
+              position: fixed;
+              inset: 0;
+              background: ${pageBackground} !important;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+              z-index: -1;
+            }
 
             #resume-preview {
               margin: 0 !important;
-              padding: ${pagePadding}px !important;
+              padding: ${pagePaddingTop}px ${pagePadding}px ${pagePaddingBottom}px !important;
               -webkit-box-decoration-break: clone;
               box-decoration-break: clone;
               font-family: ${selectedFontFamily} !important;
@@ -99,6 +124,7 @@ export const exportResumeToBrowserPrint = async (
 
             #resume-preview .min-h-screen,
             #resume-preview .min-h-full,
+            #resume-preview [class*="min-h-["],
             #resume-preview [style*="min-height"] {
               min-height: 0 !important;
             }

@@ -1,6 +1,6 @@
 # Intake · 提问卡片
 
-在加载经历库、匹配改写、写 JSON **之前**完成。用 Cursor **提问卡片**（`AskQuestion`）收集选项；不要改成一大段自由聊天问答。
+在加载经历库、匹配改写、写 JSON **之前**完成。用宿主 agent 的**提问卡片**工具（Cursor `AskQuestion` / WorkBuddy `AskUserQuestion`）收集选项；不要改成一大段自由聊天问答。
 
 ## When to ask
 
@@ -13,7 +13,7 @@
 
 **Hard stop:** do not load the experience library for writing, and do not emit JSON/PDF, until Card 1 (at least template) is answered — unless the user already named a `templateId` in the prompt.
 
-Prefer **one combined AskQuestion with multiple questions** when the tool allows; otherwise send **Card 1 then Card 2** in the same turn if possible, or Card 1 first and Card 2 immediately after answers.
+Prefer **one combined question-card call with multiple questions** when the tool allows; otherwise send **Card 1 then Card 2** in the same turn if possible, or Card 1 first and Card 2 immediately after answers.
 
 ---
 
