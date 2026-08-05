@@ -16,6 +16,7 @@ import { Providers } from "@/app/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { getPreferredLocale } from "@/i18n/runtime";
 import { ReactGrab } from "@/components/dev/ReactGrab";
+import { StaticScripts } from "@/components/shared/StaticScripts";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -76,7 +77,7 @@ function RootComponent() {
             <Toaster position="top-center" richColors />
           </Providers>
         </NextIntlClientProvider>
-        <Scripts />
+        {import.meta.env.DEV ? <StaticScripts /> : <Scripts />}
       </body>
     </html>
   );
