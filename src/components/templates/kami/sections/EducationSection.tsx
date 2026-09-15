@@ -17,6 +17,10 @@ interface EducationSectionProps {
   showTitle?: boolean;
 }
 
+/**
+ * 结构与间距度量对齐经典模板（逐条 marginTop = 段落间距、学校名 flex-[1.5]、
+ * 日期列 shrink-0 右对齐、正文 mt-1），配色与字体仍沿用 kami 的纸感 tokens。
+ */
 const EducationSection = ({
   education,
   globalSettings,
@@ -25,11 +29,12 @@ const EducationSection = ({
   const locale = useLocale();
   const visibleEducation = education?.filter((edu) => edu.visible);
   const centerSubtitle = globalSettings?.centerSubtitle;
+  const flexLayout = globalSettings?.flexibleHeaderLayout;
 
   return (
     <SectionWrapper
       sectionId="education"
-      style={{ marginTop: `${globalSettings?.sectionSpacing || 22}px` }}
+      style={{ marginTop: `${globalSettings?.sectionSpacing || 24}px` }}
     >
       <SectionTitle
         type="education"
@@ -37,89 +42,76 @@ const EducationSection = ({
         showTitle={showTitle}
       />
       <AnimatePresence mode="popLayout">
-        <div
-          className="flex flex-col"
-          style={{ marginTop: `${globalSettings?.paragraphSpacing || 14}px` }}
-        >
-          {visibleEducation?.map((edu, index) => (
-            <motion.div
-              key={edu.id}
-              layout="position"
-              className="py-2.5 first:pt-1"
-              style={{
-                borderBottom:
-                  index < (visibleEducation?.length || 0) - 1
-                    ? `0.3px dotted ${KAMI.border}`
-                    : undefined,
-              }}
-            >
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                  <h4
-                    className="font-medium"
-                    style={{
-                      fontSize: `${globalSettings?.subheaderSize || 15}px`,
-                      color: KAMI.nearBlack,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {edu.school}
-                  </h4>
-                  {centerSubtitle && (
-                    <span
-                      style={{
-                        fontSize: `${(globalSettings?.subheaderSize || 15) - 1}px`,
-                        color: KAMI.olive,
-                      }}
-                    >
-                      {[edu.major, edu.degree].filter(Boolean).join(" · ")}
-                      {edu.gpa && ` · GPA ${edu.gpa}`}
-                    </span>
-                  )}
-                </div>
-                <div
-                  className="ml-auto shrink-0"
-                  style={{
-                    fontSize: `${Math.max((globalSettings?.baseFontSize || 13) - 1, 11)}px`,
-                    color: KAMI.stone,
-                    fontVariantNumeric: "tabular-nums",
-                  }}
-                  suppressHydrationWarning
-                >
-                  {formatDateRange(edu.startDate, edu.endDate, locale)}
-                </div>
+        {visibleEducation?.map((edu) => (
+          <motion.div
+            key={edu.id}
+            layout="position"
+            style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}
+          >
+            <motion.div layout="position" className="flex items-center gap-2">
+              <div
+                className={`font-medium ${flexLayout ? "" : "flex-[1.5]"}`}
+                style={{
+                  fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                  color: KAMI.nearBlack,
+                }}
+              >
+                {edu.school}
               </div>
-
-              {!centerSubtitle && (
-                <div
-                  className="mt-1"
+              {centerSubtitle && (
+                <motion.div
+                  layout="position"
+                  className={flexLayout ? "ml-[16px]" : "flex-1"}
                   style={{
-                    fontSize: `${(globalSettings?.subheaderSize || 15) - 2}px`,
+                    fontSize: `${globalSettings?.subheaderSize || 16}px`,
                     color: KAMI.olive,
                   }}
                 >
                   {[edu.major, edu.degree].filter(Boolean).join(" · ")}
                   {edu.gpa && ` · GPA ${edu.gpa}`}
-                </div>
+                </motion.div>
               )}
-
-              {hasMeaningfulRichTextContent(edu.description) && (
-                <motion.div
-                  layout="position"
-                  className="mt-2 prose prose-sm max-w-none prose-p:my-1 [&>ul]:mt-1 [&>ul]:pl-4 [&>ul>li]:my-0.5"
-                  dangerouslySetInnerHTML={{
-                    __html: normalizeRichTextContent(edu.description),
-                  }}
-                  style={{
-                    fontSize: `${globalSettings?.baseFontSize || 13}px`,
-                    lineHeight: globalSettings?.lineHeight || 1.5,
-                    color: KAMI.nearBlack,
-                  }}
-                />
-              )}
+              <span
+                className={`shrink-0 ${flexLayout ? "ml-auto" : "flex-1 text-right"}`}
+                suppressHydrationWarning
+                style={{
+                  fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                  color: KAMI.stone,
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {formatDateRange(edu.startDate, edu.endDate, locale)}
+              </span>
             </motion.div>
-          ))}
-        </div>
+            {!centerSubtitle && (
+              <motion.div
+                layout="position"
+                className="mt-1"
+                style={{
+                  fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                  color: KAMI.olive,
+                }}
+              >
+                {[edu.major, edu.degree].filter(Boolean).join(" · ")}
+                {edu.gpa && ` · GPA ${edu.gpa}`}
+              </motion.div>
+            )}
+            {hasMeaningfulRichTextContent(edu.description) && (
+              <motion.div
+                layout="position"
+                className="mt-1"
+                style={{
+                  fontSize: `${globalSettings?.baseFontSize || 14}px`,
+                  lineHeight: globalSettings?.lineHeight || 1.6,
+                  color: KAMI.nearBlack,
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: normalizeRichTextContent(edu.description),
+                }}
+              />
+            )}
+          </motion.div>
+        ))}
       </AnimatePresence>
     </SectionWrapper>
   );

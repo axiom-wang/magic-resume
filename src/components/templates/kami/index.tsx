@@ -67,14 +67,14 @@ const KamiTemplate: React.FC<KamiTemplateProps> = ({ data, template }) => {
           <SectionWrapper
             sectionId="certificates"
             style={{
-              marginTop: `${data.globalSettings?.sectionSpacing || 22}px`,
+              marginTop: `${data.globalSettings?.sectionSpacing || 24}px`,
             }}
           >
             <SectionTitle
               type="certificates"
               globalSettings={data.globalSettings}
             />
-            <div className="mt-3" style={{ color: KAMI.olive }}>
+            <div style={{ color: KAMI.olive }}>
               <CertificatesSection certificates={data.certificates} />
             </div>
           </SectionWrapper>

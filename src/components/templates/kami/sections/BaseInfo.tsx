@@ -135,46 +135,57 @@ const BaseInfo = ({
     </motion.div>
   );
 
-  const isCenter = layout === "center";
-  const isRight = layout === "right";
+  /**
+   * 顶部布局与经典模板保持一致：
+   * 左侧「头像 + 姓名/职位」，右侧「两列信息网格」。
+   * 只对齐结构，视觉仍沿用 kami 的衬线字体与纸感配色。
+   */
+  const layoutStyles = {
+    left: {
+      container: "flex items-center justify-between gap-6",
+      leftContent: "flex items-center gap-6 shrink-0 min-w-0 max-w-[42%]",
+      fields:
+        "grid flex-1 min-w-0 grid-cols-2 gap-x-6 gap-y-2 justify-start content-start",
+      nameTitle: "text-left min-w-0 max-w-[16rem] flex-1",
+    },
+    right: {
+      container: "flex items-center justify-between gap-6 flex-row-reverse",
+      leftContent:
+        "flex flex-row-reverse justify-start items-center gap-6 shrink-0 min-w-0 max-w-[42%]",
+      fields:
+        "grid flex-1 min-w-0 grid-cols-2 gap-x-6 gap-y-2 justify-start content-start",
+      nameTitle: "text-right min-w-0 max-w-[16rem] flex-1",
+    },
+    center: {
+      container: "flex flex-col items-center gap-3",
+      leftContent: "flex flex-col items-center gap-4",
+      fields: "w-full flex justify-center items-center flex-wrap gap-3",
+      nameTitle: "text-center min-w-0 max-w-full",
+    },
+  };
+
+  const styles =
+    layoutStyles[layout as keyof typeof layoutStyles] || layoutStyles.left;
 
   return (
     <SectionWrapper sectionId="basic">
       <div
-        className={cn(
-          "flex w-full gap-6 pb-3",
-          isCenter
-            ? "flex-col items-center text-center"
-            : isRight
-              ? "flex-row-reverse items-end justify-between"
-              : "items-end justify-between"
-        )}
+        className={cn(styles.container, "w-full pb-3")}
         style={{ borderBottom: `0.6px solid ${KAMI.border}` }}
       >
-        <div
-          className={cn(
-            "flex min-w-0 items-center gap-5",
-            isCenter && "flex-col",
-            isRight && "flex-row-reverse"
-          )}
-        >
+        <div className={styles.leftContent}>
           {PhotoComponent}
-          <div
-            className={cn(
-              "flex min-w-0 flex-col",
-              isCenter && "items-center",
-              isRight && "items-end text-right"
-            )}
-          >
+          <div className={cn("flex flex-col", styles.nameTitle)}>
             {nameField.visible !== false && basic[nameField.key] && (
               <motion.h1
                 layout="position"
-                className="whitespace-normal break-normal [overflow-wrap:normal] leading-none"
+                className="whitespace-normal break-normal [overflow-wrap:normal]"
                 style={{
                   fontSize: "34px",
                   fontWeight: 500,
                   color: KAMI.nearBlack,
                   letterSpacing: "0.04em",
+                  lineHeight: 1.1,
                 }}
               >
                 {basic[nameField.key] as string}
@@ -199,18 +210,12 @@ const BaseInfo = ({
 
         <motion.div
           layout="position"
-          className={cn(
-            "flex min-w-0 flex-col gap-1",
-            isCenter
-              ? "w-full items-center flex-wrap flex-row justify-center gap-x-4 gap-y-1"
-              : isRight
-                ? "items-start text-left"
-                : "items-end text-right"
-          )}
+          className={styles.fields}
           style={{
             fontSize: `${Math.max((globalSettings?.baseFontSize || 13) - 1, 11)}px`,
             color: KAMI.stone,
             lineHeight: 1.5,
+            maxWidth: layout === "center" ? "none" : "600px",
           }}
         >
           {allFields.map((item) => {

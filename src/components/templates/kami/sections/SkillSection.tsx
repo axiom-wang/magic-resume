@@ -11,6 +11,10 @@ interface SkillSectionProps {
   showTitle?: boolean;
 }
 
+/**
+ * 结构与间距度量对齐经典模板（marginTop = 段落间距、baseFontSize/lineHeight 兜底一致），
+ * 配色与字体仍沿用 kami tokens。
+ */
 const SkillSection = ({
   skill,
   globalSettings,
@@ -19,7 +23,7 @@ const SkillSection = ({
   return (
     <SectionWrapper
       sectionId="skills"
-      style={{ marginTop: `${globalSettings?.sectionSpacing || 22}px` }}
+      style={{ marginTop: `${globalSettings?.sectionSpacing || 24}px` }}
     >
       <SectionTitle
         type="skills"
@@ -27,14 +31,13 @@ const SkillSection = ({
         showTitle={showTitle}
       />
       <motion.div
-        style={{ marginTop: `${globalSettings?.paragraphSpacing || 14}px` }}
+        style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}
       >
         <motion.div
-          className="prose prose-sm max-w-none prose-p:my-1 prose-strong:font-medium prose-ul:my-1 prose-li:my-0.5 [&>ul]:pl-4"
           layout="position"
           style={{
-            fontSize: `${globalSettings?.baseFontSize || 13}px`,
-            lineHeight: globalSettings?.lineHeight || 1.5,
+            fontSize: `${globalSettings?.baseFontSize || 14}px`,
+            lineHeight: globalSettings?.lineHeight || 1.6,
             color: KAMI.nearBlack,
           }}
           dangerouslySetInnerHTML={{

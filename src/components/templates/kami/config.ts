@@ -13,10 +13,11 @@ export const kamiConfig: ResumeTemplate = {
     background: KAMI.parchment,
     text: KAMI.nearBlack,
   },
+  // 与经典模板保持一致的版面节奏（板块间距 / 条目间距 / 页边距）
   spacing: {
-    sectionGap: 22,
-    itemGap: 14,
-    contentPadding: 40,
+    sectionGap: 16,
+    itemGap: 12,
+    contentPadding: 32,
   },
   basic: {
     layout: "left",

@@ -11,6 +11,10 @@ interface SelfEvaluationSectionProps {
   showTitle?: boolean;
 }
 
+/**
+ * 结构与间距度量对齐经典模板：去掉原来的圆角色块（padding / 背景色会改变版面），
+ * 与经典模板一样直接铺正文；字号与行高兜底一致，颜色沿用 kami tokens。
+ */
 const SelfEvaluationSection = ({
   content,
   globalSettings,
@@ -19,7 +23,7 @@ const SelfEvaluationSection = ({
   return (
     <SectionWrapper
       sectionId="selfEvaluation"
-      style={{ marginTop: `${globalSettings?.sectionSpacing || 22}px` }}
+      style={{ marginTop: `${globalSettings?.sectionSpacing || 24}px` }}
     >
       <SectionTitle
         type="selfEvaluation"
@@ -27,24 +31,19 @@ const SelfEvaluationSection = ({
         showTitle={showTitle}
       />
       <motion.div
-        style={{ marginTop: `${globalSettings?.paragraphSpacing || 14}px` }}
+        style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}
       >
         <motion.div
           layout="position"
-          className="rounded px-3 py-2.5 prose prose-sm max-w-none prose-p:my-1 [&>ul]:mt-1 [&>ul]:pl-4 [&>ul>li]:my-0.5"
-          style={{ backgroundColor: KAMI.brandTint }}
-        >
-          <div
-            style={{
-              fontSize: `${globalSettings?.baseFontSize || 13}px`,
-              lineHeight: globalSettings?.lineHeight || 1.5,
-              color: KAMI.olive,
-            }}
-            dangerouslySetInnerHTML={{
-              __html: normalizeRichTextContent(content),
-            }}
-          />
-        </motion.div>
+          style={{
+            fontSize: `${globalSettings?.baseFontSize || 14}px`,
+            lineHeight: globalSettings?.lineHeight || 1.6,
+            color: KAMI.nearBlack,
+          }}
+          dangerouslySetInnerHTML={{
+            __html: normalizeRichTextContent(content),
+          }}
+        />
       </motion.div>
     </SectionWrapper>
   );

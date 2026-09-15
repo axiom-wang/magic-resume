@@ -16,6 +16,10 @@ interface ProjectSectionProps {
   showTitle?: boolean;
 }
 
+/**
+ * 结构与间距度量对齐经典模板（逐条 marginTop = 段落间距、项目名 flex-[1.5]、
+ * 链接/日期列的 flex 占位与 centerSubtitle 分支完全一致），配色沿用 kami tokens。
+ */
 const ProjectSection: React.FC<ProjectSectionProps> = ({
   projects,
   globalSettings,
@@ -24,107 +28,123 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({
   const locale = useLocale();
   const visibleProjects = projects?.filter((p) => p.visible);
   const centerSubtitle = globalSettings?.centerSubtitle;
+  const flexLayout = globalSettings?.flexibleHeaderLayout;
   const themeColor = globalSettings?.themeColor || KAMI.brand;
 
   return (
     <SectionWrapper
       sectionId="projects"
-      style={{ marginTop: `${globalSettings?.sectionSpacing || 22}px` }}
+      style={{ marginTop: `${globalSettings?.sectionSpacing || 24}px` }}
     >
       <SectionTitle
         type="projects"
         globalSettings={globalSettings}
         showTitle={showTitle}
       />
-      <motion.div
-        layout="position"
-        className="flex flex-col"
-        style={{ marginTop: `${globalSettings?.paragraphSpacing || 14}px` }}
-      >
+      <motion.div layout="position">
         <AnimatePresence mode="popLayout">
           {visibleProjects.map((project) => {
             const projectLink = getProjectLinkMeta(project, {
               preferFullUrl: centerSubtitle,
             });
 
+            const linkNode = projectLink && (
+              <a
+                href={projectLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-1 ${flexLayout ? "" : "flex-1"}`}
+                title={projectLink.title}
+                style={{
+                  fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                  color: themeColor,
+                }}
+              >
+                <Icons.ExternalLink className="h-3 w-3 shrink-0" />
+                <span>{projectLink.label}</span>
+              </a>
+            );
+
             return (
               <motion.div
                 key={project.id}
-                layout="position"
-                className="py-2.5 first:pt-1"
+                style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}
               >
-                <div className="flex items-baseline justify-between gap-3">
-                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2.5 gap-y-1">
-                    <h4
+                <motion.div className="flex items-center gap-2">
+                  <div
+                    className={`flex items-center gap-2 ${flexLayout ? "" : "flex-[1.5]"}`}
+                  >
+                    <h3
                       className="font-medium"
                       style={{
-                        fontSize: `${globalSettings?.subheaderSize || 15}px`,
+                        fontSize: `${globalSettings?.subheaderSize || 16}px`,
                         color: KAMI.nearBlack,
-                        fontWeight: 500,
                       }}
                     >
                       {project.name}
-                    </h4>
-                    {centerSubtitle && project.role && (
-                      <span
-                        style={{
-                          fontSize: `${(globalSettings?.subheaderSize || 15) - 1}px`,
-                          color: KAMI.olive,
-                        }}
-                      >
-                        {project.role}
-                      </span>
-                    )}
-                    {projectLink && (
-                      <a
-                        href={projectLink.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1"
-                        title={projectLink.title}
-                        style={{
-                          fontSize: "11px",
-                          color: themeColor,
-                        }}
-                      >
-                        <Icons.ExternalLink className="h-3 w-3 shrink-0" />
-                        <span>{projectLink.label}</span>
-                      </a>
-                    )}
+                    </h3>
                   </div>
+                  {projectLink && !centerSubtitle && linkNode}
+                  {!projectLink && !centerSubtitle && !flexLayout && (
+                    <div className="flex-1" />
+                  )}
+                  {centerSubtitle && (
+                    <motion.div
+                      layout="position"
+                      className={flexLayout ? "ml-[16px]" : "flex-1"}
+                      style={{
+                        fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                        color: KAMI.olive,
+                      }}
+                    >
+                      {project.role}
+                    </motion.div>
+                  )}
                   <div
-                    className="ml-auto shrink-0"
+                    className={`shrink-0 ${flexLayout ? "ml-auto" : "flex-1 text-right"}`}
                     style={{
-                      fontSize: `${Math.max((globalSettings?.baseFontSize || 13) - 1, 11)}px`,
+                      fontSize: `${globalSettings?.subheaderSize || 16}px`,
                       color: KAMI.stone,
                       fontVariantNumeric: "tabular-nums",
                     }}
                   >
                     {formatDateString(project.date, locale)}
                   </div>
-                </div>
-
+                </motion.div>
                 {project.role && !centerSubtitle && (
-                  <div
-                    className="mt-1 inline-block rounded px-2 py-0.5"
+                  <motion.div
+                    layout="position"
                     style={{
-                      fontSize: `${(globalSettings?.subheaderSize || 15) - 3}px`,
-                      color: themeColor,
-                      fontWeight: 500,
-                      backgroundColor: KAMI.brandTint,
+                      fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                      color: KAMI.olive,
                     }}
                   >
                     {project.role}
-                  </div>
+                  </motion.div>
                 )}
-
+                {projectLink && centerSubtitle && (
+                  <a
+                    href={projectLink.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1"
+                    title={projectLink.title}
+                    style={{
+                      fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                      color: themeColor,
+                    }}
+                  >
+                    <Icons.ExternalLink className="h-3 w-3 shrink-0" />
+                    <span>{projectLink.label}</span>
+                  </a>
+                )}
                 {project.description && (
                   <motion.div
                     layout="position"
-                    className="mt-2 prose prose-sm max-w-none prose-p:my-1 [&>ul]:mt-1 [&>ul]:pl-4 [&>ul>li]:my-0.5"
+                    className="mt-1"
                     style={{
-                      fontSize: `${globalSettings?.baseFontSize || 13}px`,
-                      lineHeight: globalSettings?.lineHeight || 1.5,
+                      fontSize: `${globalSettings?.baseFontSize || 14}px`,
+                      lineHeight: globalSettings?.lineHeight || 1.6,
                       color: KAMI.nearBlack,
                     }}
                     dangerouslySetInnerHTML={{

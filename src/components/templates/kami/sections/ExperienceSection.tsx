@@ -14,6 +14,10 @@ interface ExperienceSectionProps {
   showTitle?: boolean;
 }
 
+/**
+ * 结构与间距度量对齐经典模板（逐条 marginTop = 段落间距、公司名 flex-[1.5]、
+ * 日期列 shrink-0 右对齐），配色与字体仍沿用 kami 的纸感 tokens。
+ */
 const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   experiences,
   globalSettings,
@@ -22,12 +26,12 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   const locale = useLocale();
   const visibleExperiences = experiences?.filter((exp) => exp.visible);
   const centerSubtitle = globalSettings?.centerSubtitle;
-  const themeColor = globalSettings?.themeColor || KAMI.brand;
+  const flexLayout = globalSettings?.flexibleHeaderLayout;
 
   return (
     <SectionWrapper
       sectionId="experience"
-      style={{ marginTop: `${globalSettings?.sectionSpacing || 22}px` }}
+      style={{ marginTop: `${globalSettings?.sectionSpacing || 24}px` }}
     >
       <SectionTitle
         type="experience"
@@ -35,82 +39,69 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({
         showTitle={showTitle}
       />
       <AnimatePresence mode="popLayout">
-        <div
-          className="flex flex-col"
-          style={{ marginTop: `${globalSettings?.paragraphSpacing || 14}px` }}
-        >
-          {visibleExperiences?.map((exp) => (
-            <motion.div
-              key={exp.id}
-              layout="position"
-              className="py-2.5 first:pt-1"
-            >
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                  <h4
-                    className="font-medium"
-                    style={{
-                      fontSize: `${globalSettings?.subheaderSize || 15}px`,
-                      color: KAMI.nearBlack,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {exp.company}
-                  </h4>
-                  {centerSubtitle && exp.position && (
-                    <span
-                      style={{
-                        fontSize: `${(globalSettings?.subheaderSize || 15) - 1}px`,
-                        color: KAMI.olive,
-                      }}
-                    >
-                      {exp.position}
-                    </span>
-                  )}
-                </div>
-                <div
-                  className="ml-auto shrink-0"
-                  style={{
-                    fontSize: `${Math.max((globalSettings?.baseFontSize || 13) - 1, 11)}px`,
-                    color: KAMI.stone,
-                    fontVariantNumeric: "tabular-nums",
-                  }}
-                >
-                  {formatDateString(exp.date, locale)}
-                </div>
+        {visibleExperiences?.map((exp) => (
+          <motion.div
+            key={exp.id}
+            layout="position"
+            style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}
+          >
+            <motion.div className="flex items-center gap-2">
+              <div
+                className={`font-medium ${flexLayout ? "" : "flex-[1.5]"}`}
+                style={{
+                  fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                  color: KAMI.nearBlack,
+                }}
+              >
+                {exp.company}
               </div>
-
-              {exp.position && !centerSubtitle && (
-                <div
-                  className="mt-1 inline-block rounded px-2 py-0.5"
+              {centerSubtitle && (
+                <motion.div
+                  className={flexLayout ? "ml-[16px]" : "flex-1"}
                   style={{
-                    fontSize: `${(globalSettings?.subheaderSize || 15) - 3}px`,
-                    color: themeColor,
-                    fontWeight: 500,
-                    backgroundColor: KAMI.brandTint,
+                    fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                    color: KAMI.olive,
                   }}
                 >
                   {exp.position}
-                </div>
+                </motion.div>
               )}
-
-              {exp.details && (
-                <motion.div
-                  layout="position"
-                  className="mt-2 prose prose-sm max-w-none prose-p:my-1 [&>ul]:mt-1 [&>ul]:pl-4 [&>ul>li]:my-0.5"
-                  dangerouslySetInnerHTML={{
-                    __html: normalizeRichTextContent(exp.details),
-                  }}
-                  style={{
-                    fontSize: `${globalSettings?.baseFontSize || 13}px`,
-                    lineHeight: globalSettings?.lineHeight || 1.5,
-                    color: KAMI.nearBlack,
-                  }}
-                />
-              )}
+              <div
+                className={`shrink-0 ${flexLayout ? "ml-auto" : "flex-1 text-right"}`}
+                style={{
+                  fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                  color: KAMI.stone,
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {formatDateString(exp.date, locale)}
+              </div>
             </motion.div>
-          ))}
-        </div>
+            {exp.position && !centerSubtitle && (
+              <motion.div
+                style={{
+                  fontSize: `${globalSettings?.subheaderSize || 16}px`,
+                  color: KAMI.olive,
+                }}
+              >
+                {exp.position}
+              </motion.div>
+            )}
+            {exp.details && (
+              <motion.div
+                className="mt-1"
+                dangerouslySetInnerHTML={{
+                  __html: normalizeRichTextContent(exp.details),
+                }}
+                style={{
+                  fontSize: `${globalSettings?.baseFontSize || 14}px`,
+                  lineHeight: globalSettings?.lineHeight || 1.6,
+                  color: KAMI.nearBlack,
+                }}
+              />
+            )}
+          </motion.div>
+        ))}
       </AnimatePresence>
     </SectionWrapper>
   );
