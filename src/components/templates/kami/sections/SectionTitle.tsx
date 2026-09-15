@@ -1,3 +1,4 @@
+import { TitleLink } from "../../shared/TitleLink";
 import { useMemo } from "react";
 import { GlobalSettings } from "@/types/resume";
 import { useTemplateContext } from "../../TemplateContext";
@@ -7,12 +8,14 @@ import { KAMI } from "../tokens";
 interface SectionTitleProps {
   globalSettings?: GlobalSettings;
   type: string;
+    sectionId?: string;
   title?: string;
   showTitle?: boolean;
 }
 
 const SectionTitle = ({
   type,
+  sectionId,
   title,
   globalSettings,
   showTitle = true,
@@ -48,7 +51,7 @@ const SectionTitle = ({
           lineHeight: 1.25,
         }}
       >
-        {renderTitle}
+        <span><TitleLink link={menuSections.find((s) => s.id === (sectionId ?? type))?.link} label={renderTitle} /></span>
       </h3>
     </div>
   );

@@ -1,3 +1,4 @@
+import { TitleLink } from "../../shared/TitleLink";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionTitle from "./SectionTitle";
@@ -26,15 +27,15 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ projects, globalSetting
             <motion.div layout="position">
                 <AnimatePresence mode="popLayout">
                     {visibleProjects.map((project) => {
-                        const projectLink = getProjectLinkMeta(project, {
+                        const projectLink = project.linkDisplay === "superscript" ? null : getProjectLinkMeta(project, {
                             preferFullUrl: centerSubtitle,
                         });
 
                         return (
                         <motion.div key={project.id} style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}>
                             <motion.div className="flex items-center justify-between gap-4">
-                                <div className={cn("flex items-center gap-2 truncate", flexLayout ? "" : "flex-1")}>
-                                    <h3 className="font-bold truncate" style={{ fontSize: `${globalSettings?.subheaderSize || 16}px` }}>{project.name}</h3>
+                                <div className={cn(project.linkDisplay === "superscript" ? "flex items-center gap-2 min-w-0" : "flex items-center gap-2 truncate", flexLayout ? "" : "flex-1")}>
+                                    <h3 data-project-title-link={project.linkDisplay === "superscript" || undefined} className={project.linkDisplay === "superscript" ? "font-bold break-words min-w-0" : "font-bold truncate"} style={{ fontSize: `${globalSettings?.subheaderSize || 16}px` }}><TitleLink link={project.linkDisplay === "superscript" ? project.link : undefined} label={project.name} /></h3>
                                 </div>
                                 {projectLink && !centerSubtitle && (
                                     <a href={projectLink.href} target="_blank" rel="noopener noreferrer"

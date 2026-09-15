@@ -1,21 +1,17 @@
 import { Project } from "@/types/resume";
 
-const ABSOLUTE_PROTOCOL_REGEX = /^[a-z][a-z\d+\-.]*:/i;
-const SAFE_PROTOCOL_REGEX = /^https?:/i;
-
+// Website-only links used by section and project headings.
 export const getProjectLinkHref = (link?: string) => {
   const value = link?.trim();
-  if (!value) return null;
-
-  if (SAFE_PROTOCOL_REGEX.test(value)) {
-    return value;
-  }
-
-  if (ABSOLUTE_PROTOCOL_REGEX.test(value)) {
+  if (!value || /\s/.test(value)) return null;
+  if (/^[a-z][a-z\d+\-.]*:/i.test(value) && !/^https?:\/\//i.test(value)) return null;
+  try {
+    const url = new URL(value.startsWith("//") ? `https:${value}` : /^https?:\/\//i.test(value) ? value : `https://${value}`);
+    if (!url.hostname || url.username || url.password || !["https:", "http:"].includes(url.protocol)) return null;
+    return url.href;
+  } catch {
     return null;
   }
-
-  return `https://${value}`;
 };
 
 export const getProjectLinkLabel = (

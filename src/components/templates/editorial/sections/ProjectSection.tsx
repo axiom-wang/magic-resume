@@ -1,3 +1,4 @@
+import { TitleLink } from "../../shared/TitleLink";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionTitle from "./SectionTitle";
@@ -22,13 +23,13 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ projects, globalSetting
       <SectionTitle type="projects" globalSettings={globalSettings} showTitle={showTitle} />
       <AnimatePresence mode="popLayout">
         {visibleProjects.map((project) => {
-          const projectLink = getProjectLinkMeta(project);
+          const projectLink = project.linkDisplay === "superscript" ? null : getProjectLinkMeta(project);
 
           return (
           <motion.div key={project.id} layout="position" className="relative pb-6 last:pb-0" style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}>
             
-            <motion.h4 layout="position" className="font-bold text-black" style={{ fontSize: `${globalSettings?.subheaderSize || 18}px`, lineHeight: "1.2" }}>
-              {project.name}
+            <motion.h4 data-project-title-link={project.linkDisplay === "superscript" || undefined} layout="position" className="font-bold text-black" style={{ fontSize: `${globalSettings?.subheaderSize || 18}px`, lineHeight: "1.2" }}>
+              <TitleLink link={project.linkDisplay === "superscript" ? project.link : undefined} label={project.name} />
             </motion.h4>
             
             <motion.div layout="position" className="uppercase tracking-[0.1em] text-gray-500 mt-2" style={{ fontSize: `${globalSettings?.subheaderSize || 16}px` }}>

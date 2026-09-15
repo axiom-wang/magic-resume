@@ -117,6 +117,7 @@ export interface Project {
   visible: boolean;
   link?: string;
   linkLabel?: string;
+  linkDisplay?: "text" | "superscript";
 }
 
 export interface Certificate {
@@ -172,6 +173,7 @@ export const THEME_COLORS = [
 ];
 
 export interface MenuSection {
+  link?: string;
   id: string;
   title: string;
   icon: string;

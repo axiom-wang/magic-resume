@@ -333,14 +333,29 @@ const BackgroundColorButton = ({ editor }: { editor: Editor }) => {
   );
 };
 
+const StyledLink = Link.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      linkDisplay: {
+        default: "text",
+        parseHTML: (element) => element.getAttribute("data-link-display") === "superscript" ? "superscript" : "text",
+        renderHTML: (attributes) => attributes.linkDisplay === "superscript" ? { "data-link-display": "superscript" } : {},
+      },
+    };
+  },
+});
+
 const LinkButton = ({ editor }: { editor: Editor }) => {
   const [open, setOpen] = React.useState(false);
   const [linkUrl, setLinkUrl] = React.useState("");
+  const [linkDisplay, setLinkDisplay] = React.useState("text");
   const t = useTranslations("richEditor");
 
   React.useEffect(() => {
     if (!open) return;
     setLinkUrl(editor.getAttributes("link").href || "");
+    setLinkDisplay(editor.getAttributes("link").linkDisplay || "text");
   }, [editor, open]);
 
   const applyLink = () => {
@@ -360,8 +375,8 @@ const LinkButton = ({ editor }: { editor: Editor }) => {
         target: "_blank",
         rel: "noopener noreferrer",
       })
+      .updateAttributes("link", { linkDisplay })
       .run();
-
     setLinkUrl(normalizedHref);
     setOpen(false);
   };
@@ -407,6 +422,13 @@ const LinkButton = ({ editor }: { editor: Editor }) => {
               }
             }}
           />
+          <label className="flex flex-col gap-1 text-sm">
+            <span>{t("linkDisplay")}</span>
+            <select aria-label={t("linkDisplay")} className="rounded border border-input bg-background p-2" value={linkDisplay} onChange={(e) => setLinkDisplay(e.target.value)}>
+              <option value="text">{t("linkText")}</option>
+              <option value="superscript">{t("linkSuperscript")}</option>
+            </select>
+          </label>
           <div className="flex items-center justify-end gap-2">
             {editor.isActive("link") && (
               <Button
@@ -473,7 +495,7 @@ const RichTextEditor = ({
       TextStyle,
       Underline,
       Color,
-      Link.configure({
+      StyledLink.configure({
         openOnClick: false,
         autolink: true,
         linkOnPaste: true,

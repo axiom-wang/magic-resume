@@ -269,3 +269,29 @@
 [contenteditable]:focus {
   outline: none;
 }
+
+// Inline link icons remain inside the anchor's printable hit area.
+.resume-title-link-icon,
+a[data-link-display="superscript"]::after {
+  display: inline-block;
+  font-size: 0.65em;
+  line-height: 1;
+  vertical-align: super;
+  margin-left: 0.18em;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.resume-title-link { color: inherit; text-decoration: none; cursor: pointer; }
+.resume-title-link:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }
+.tiptap a[data-link-display="superscript"],
+#resume-preview a[data-link-display="superscript"],
+.resume-preview a[data-link-display="superscript"] {
+  color: inherit;
+  text-decoration: none;
+  border: 0;
+}
+a[data-link-display="superscript"]::after { content: "↗"; }
+
+[data-project-title-link] { min-width: 0; overflow-wrap: anywhere; }
+div:has(> [data-project-title-link]) { min-width: 0; }

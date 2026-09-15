@@ -1,3 +1,4 @@
+import { TitleLink } from "../shared/TitleLink";
 import React from "react";
 import { ResumeData } from "@/types/resume";
 import { ResumeTemplate } from "@/types/template";
@@ -8,7 +9,6 @@ import ProjectSection from "./sections/ProjectSection";
 import SkillSection from "./sections/SkillSection";
 import SelfEvaluationSection from "./sections/SelfEvaluationSection";
 import CustomSection from "./sections/CustomSection";
-import SectionTitle from "./sections/SectionTitle";
 import SectionWrapper from "../shared/SectionWrapper";
 import CertificatesSection from "../shared/CertificatesSection";
 
@@ -22,12 +22,12 @@ const TimelineTemplate: React.FC<TimelineTemplateProps> = ({ data, template }) =
     const { colorScheme } = template;
     const enabledSections = data.menuSections.filter((s) => s.enabled).sort((a, b) => a.order - b.order);
 
-    const renderTimelineItem = (content: React.ReactNode, title: string) => (
+    const renderTimelineItem = (content: React.ReactNode, title: string, link?: string) => (
         <div className="relative pl-6">
             <div className="absolute left-0 top-2 h-full w-0.5" style={{ backgroundColor: "#e5e7eb" }} />
             <div className="absolute left-[-6px] top-2 w-3 h-3 rounded-full" style={{ backgroundColor: colorScheme.primary }} />
             <div className="text-xl font-bold mb-4" style={{ color: data.globalSettings.themeColor, fontSize: `${data.globalSettings.headerSize || 20}px` }}>
-                {title}
+                <TitleLink link={link} label={title} />
             </div>
             <div>{content}</div>
         </div>
@@ -48,7 +48,6 @@ const TimelineTemplate: React.FC<TimelineTemplateProps> = ({ data, template }) =
             case "certificates":
                 return (
                     <SectionWrapper sectionId="certificates" style={{ marginTop: `${data.globalSettings?.sectionSpacing || 24}px` }}>
-                        <SectionTitle type="certificates" globalSettings={data.globalSettings} />
                         <CertificatesSection certificates={data.certificates} />
                     </SectionWrapper>
                 );
@@ -74,7 +73,7 @@ const TimelineTemplate: React.FC<TimelineTemplateProps> = ({ data, template }) =
                 return (
                     <div key={section.id} className="mb-4">
                         <div className="timeline-section">
-                            {renderTimelineItem(renderSection(section.id), sectionTitle)}
+                            {renderTimelineItem(renderSection(section.id), sectionTitle, section.link)}
                         </div>
                     </div>
                 );

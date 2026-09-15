@@ -1,3 +1,4 @@
+import { TitleLink } from "../../shared/TitleLink";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionTitle from "./SectionTitle";
@@ -26,7 +27,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ projects, globalSetting
             <motion.div layout="position">
                 <AnimatePresence mode="popLayout">
                     {visibleProjects.map((project) => {
-                        const projectLink = getProjectLinkMeta(project, {
+                        const projectLink = project.linkDisplay === "superscript" ? null : getProjectLinkMeta(project, {
                             preferFullUrl: centerSubtitle,
                         });
 
@@ -34,7 +35,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ projects, globalSetting
                         <motion.div key={project.id} style={{ marginTop: `${globalSettings?.paragraphSpacing}px` }}>
                             <motion.div className="flex items-center gap-2">
                                 <div className={`flex items-center gap-2 ${flexLayout ? "" : "flex-[1.5]"}`}>
-                                    <h3 className="font-bold" style={{ fontSize: `${globalSettings?.subheaderSize || 16}px` }}>{project.name}</h3>
+                                    <h3 data-project-title-link={project.linkDisplay === "superscript" || undefined} className="font-bold" style={{ fontSize: `${globalSettings?.subheaderSize || 16}px` }}><TitleLink link={project.linkDisplay === "superscript" ? project.link : undefined} label={project.name} /></h3>
                                 </div>
                                 {projectLink && !centerSubtitle && (
                                     <a href={projectLink.href} target="_blank" rel="noopener noreferrer"

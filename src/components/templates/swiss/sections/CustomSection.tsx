@@ -23,7 +23,7 @@ const CustomSection = ({ sectionId, title, items, globalSettings, showTitle = tr
 
     return (
         <SectionWrapper sectionId={sectionId} style={{ marginTop: `${globalSettings?.sectionSpacing || 24}px` }}>
-            <SectionTitle title={title} type="custom" globalSettings={globalSettings} showTitle={showTitle} />
+            <SectionTitle title={title} type="custom" sectionId={sectionId} globalSettings={globalSettings} showTitle={showTitle} />
             <AnimatePresence mode="popLayout">
                 <div className="flex flex-col gap-6" style={{ marginTop: `${globalSettings?.paragraphSpacing || 16}px` }}>
                     {visibleItems.map((item) => (

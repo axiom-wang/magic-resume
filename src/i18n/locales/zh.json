@@ -239,7 +239,6 @@
         "name": "极简模板",
         "description": "大面积留白，干净纯粹的排版风格"
       },
-
       "elegant": {
         "name": "优雅模板",
         "description": "居中标题单列设计，具有高级感的分隔线"
@@ -585,7 +584,10 @@
       "purple": "紫色",
       "magenta": "紫红",
       "pink": "粉色"
-    }
+    },
+    "linkDisplay": "链接样式",
+    "linkText": "普通链接",
+    "linkSuperscript": "右上角图标"
   },
   "iconSelector": {
     "all": "全部",
@@ -826,5 +828,13 @@
         "answer": "在左侧编辑面板的“布局”设置中，将光标悬停在模块卡片左侧的「拖拽手柄」（通常表现为六个点状图标）上，按住鼠标左键即可上下拖拽模块以重新排序整个简历的章节。"
       }
     }
+  },
+  "resumeLinks": {
+    "sectionLink": "标题链接",
+    "display": "链接样式",
+    "text": "链接文字",
+    "superscript": "右上角图标",
+    "invalid": "请输入有效的网站地址",
+    "placeholder": "https://example.com"
   }
 }

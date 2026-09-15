@@ -1,3 +1,5 @@
+import { getProjectLinkHref } from "./projectLink";
+
 const HTML_TAG_REGEX = /<\/?[a-z][\s\S]*>/i;
 const EMPTY_PARAGRAPH_REGEX = /<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi;
 const HTML_BREAK_REGEX = /<br\s*\/?>/gi;
@@ -74,12 +76,12 @@ export const normalizeLinkHref = (href?: string) => {
   const value = href.trim();
   if (!value) return null;
 
-  if (SAFE_LINK_PROTOCOL_REGEX.test(value)) {
-    return value;
+  if (/^https?:/i.test(value) || value.startsWith("//")) {
+    return getProjectLinkHref(value);
   }
 
-  if (value.startsWith("//")) {
-    return `https:${value}`;
+  if (SAFE_LINK_PROTOCOL_REGEX.test(value)) {
+    return value;
   }
 
   if (EMAIL_REGEX.test(value)) {

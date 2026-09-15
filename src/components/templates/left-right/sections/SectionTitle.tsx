@@ -1,3 +1,4 @@
+import { TitleLink } from "../../shared/TitleLink";
 import { useMemo } from "react";
 import { GlobalSettings } from "@/types/resume";
 import { useTemplateContext } from "../../TemplateContext";
@@ -6,11 +7,12 @@ import { useResumeStore } from "@/store/useResumeStore";
 interface SectionTitleProps {
     globalSettings?: GlobalSettings;
     type: string;
+    sectionId?: string;
     title?: string;
     showTitle?: boolean;
 }
 
-const SectionTitle = ({ type, title, globalSettings, showTitle = true }: SectionTitleProps) => {
+const SectionTitle = ({ type, sectionId, title, globalSettings, showTitle = true }: SectionTitleProps) => {
     const { activeResume } = useResumeStore();
     const templateContext = useTemplateContext();
     const menuSections = templateContext?.menuSections ?? activeResume?.menuSections ?? [];
@@ -35,7 +37,7 @@ const SectionTitle = ({ type, title, globalSettings, showTitle = true }: Section
                     marginBottom: `${globalSettings?.paragraphSpacing}px`,
                 }}
             >
-                {renderTitle}
+                <span><TitleLink link={menuSections.find((s) => s.id === (sectionId ?? type))?.link} label={renderTitle} /></span>
             </h3>
         </div>
     );

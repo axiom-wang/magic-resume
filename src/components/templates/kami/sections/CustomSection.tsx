@@ -41,7 +41,7 @@ const CustomSection = ({
     >
       <SectionTitle
         title={title}
-        type="custom"
+        type="custom" sectionId={sectionId}
         globalSettings={globalSettings}
         showTitle={showTitle}
       />

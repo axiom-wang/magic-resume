@@ -238,7 +238,6 @@
         "name": "Minimalist",
         "description": "Large amount of whitespace, clean and pure layout style"
       },
-
       "elegant": {
         "name": "Elegant",
         "description": "Centered title single-column design, with a touch of elegance"
@@ -630,7 +629,10 @@
       "purple": "Purple",
       "magenta": "Magenta",
       "pink": "Pink"
-    }
+    },
+    "linkDisplay": "Link style",
+    "linkText": "Regular link",
+    "linkSuperscript": "Superscript icon"
   },
   "iconSelector": {
     "all": "All",
@@ -824,5 +826,13 @@
         "answer": "In the 'Layout' settings of the left edit panel, hover your cursor over the 'Drag Handle' (usually represented by a six-dot icon) on the left side of the module card. Click and hold the left mouse button to drag the module up or down to reorder the sections of your entire resume."
       }
     }
+  },
+  "resumeLinks": {
+    "sectionLink": "Title link",
+    "display": "Link style",
+    "text": "Link text",
+    "superscript": "Superscript icon",
+    "invalid": "Enter a valid website address",
+    "placeholder": "https://example.com"
   }
 }

@@ -1,3 +1,4 @@
+import { getProjectLinkHref } from "@/lib/projectLink";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useResumeStore } from "@/store/useResumeStore";
@@ -24,6 +25,8 @@ interface ProjectEditorProps {
 
 const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, onSave }) => {
   const t = useTranslations("workbench.projectItem");
+  const linkT = useTranslations("resumeLinks");
+  const invalidLink = Boolean(project.link?.trim() && !getProjectLinkHref(project.link));
   const handleChange = (field: keyof Project, value: string) => {
     onSave({
       ...project,
@@ -61,6 +64,7 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, onSave }) => {
                 <Input
                   type="text"
                   value={project.link || ""}
+                  aria-invalid={invalidLink}
                   onChange={(e) => handleChange("link", e.target.value)}
                   placeholder={t("placeholders.link")}
                 />
@@ -77,6 +81,15 @@ const ProjectEditor: React.FC<ProjectEditorProps> = ({ project, onSave }) => {
                 />
               </label>
             </div>
+            {invalidLink && <p role="alert" className="mt-2 text-xs text-destructive">{linkT("invalid")}</p>}
+            <label className="mt-3 flex items-center gap-3 text-sm">
+              <span>{linkT("display")}</span>
+              <select aria-label={linkT("display")} className="rounded border border-input bg-background p-2" value={project.linkDisplay || "text"}
+                onChange={(e) => handleChange("linkDisplay", e.target.value)}>
+                <option value="text">{linkT("text")}</option>
+                <option value="superscript">{linkT("superscript")}</option>
+              </select>
+            </label>
             <p className="mt-3 text-xs text-muted-foreground">
               {t("hints.linkLabel")}
             </p>

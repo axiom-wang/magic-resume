@@ -1,3 +1,6 @@
+import { useTranslations } from "@/i18n/compat/client";
+import { getProjectLinkHref } from "@/lib/projectLink";
+import { Input } from "@/components/ui/input";
 import React from "react";
 import { Pencil } from "lucide-react";
 import { motion } from "framer-motion";
@@ -19,6 +22,7 @@ import {
 } from "../ui/tooltip";
 
 export function EditPanel() {
+  const t = useTranslations("resumeLinks");
   const { activeResume, updateMenuSections } = useResumeStore();
   if (!activeResume) return;
   const { activeSection = "", menuSections = [] } = activeResume || {};
@@ -111,6 +115,16 @@ export function EditPanel() {
               </>
             )}
           </div>
+          {activeSection !== "basic" && (() => {
+            const section = menuSections.find((s) => s.id === activeSection);
+            const invalid = Boolean(section?.link?.trim() && !getProjectLinkHref(section.link));
+            return <label className="mt-3 block space-y-1 text-sm">
+              <span>{t("sectionLink")}</span>
+              <Input aria-label={t("sectionLink")} value={section?.link || ""} placeholder={t("placeholder")} aria-invalid={invalid}
+                onChange={(e) => updateMenuSections(menuSections.map((s) => s.id === activeSection ? { ...s, link: e.target.value } : s))} />
+              {invalid && <span role="alert" className="text-destructive">{t("invalid")}</span>}
+            </label>;
+          })()}
         </motion.div>
 
         <motion.div

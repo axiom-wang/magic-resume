@@ -1,3 +1,4 @@
+import { TitleLink } from "../../shared/TitleLink";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as Icons from "lucide-react";
@@ -27,7 +28,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ projects, globalSetting
             <motion.div layout="position" className="flex flex-col gap-6" style={{ marginTop: `${globalSettings?.paragraphSpacing || 16}px` }}>
                 <AnimatePresence mode="popLayout">
                     {visibleProjects.map((project) => {
-                        const projectLink = getProjectLinkMeta(project, {
+                        const projectLink = project.linkDisplay === "superscript" ? null : getProjectLinkMeta(project, {
                             preferFullUrl: centerSubtitle,
                         });
 
@@ -36,11 +37,11 @@ const ProjectSection: React.FC<ProjectSectionProps> = ({ projects, globalSetting
                                 {/* 项目排版头部 */}
                                 <div className="flex items-baseline justify-between gap-3">
                                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
-                                        <h4 
+                                        <h4 data-project-title-link={project.linkDisplay === "superscript" || undefined}
                                             className="font-extrabold text-slate-800 tracking-tight"
                                             style={{ fontSize: `${globalSettings?.subheaderSize || 16}px` }}
                                         >
-                                            {project.name}
+                                            <TitleLink link={project.linkDisplay === "superscript" ? project.link : undefined} label={project.name} />
                                         </h4>
                                         {centerSubtitle && (
                                             <span 
