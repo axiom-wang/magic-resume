@@ -169,10 +169,8 @@ const BaseInfo = ({
 
   return (
     <SectionWrapper sectionId="basic">
-      <div
-        className={cn(styles.container, "w-full pb-3")}
-        style={{ borderBottom: `0.6px solid ${KAMI.border}` }}
-      >
+      {/* 头部（基本信息）不出分割线，避免与第一个板块标题的线重复 */}
+      <div className={cn(styles.container, "w-full pb-3")}>
         <div className={styles.leftContent}>
           {PhotoComponent}
           <div className={cn("flex flex-col", styles.nameTitle)}>

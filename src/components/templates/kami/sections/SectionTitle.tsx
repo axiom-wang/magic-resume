@@ -33,7 +33,7 @@ const SectionTitle = ({
     <div
       className="flex w-full items-baseline justify-between gap-2"
       style={{
-        borderBottom: `0.5px solid ${KAMI.border}`,
+        borderBottom: `1px solid ${KAMI.rule}`,
         // 与经典模板一致的标题度量：padding-bottom 8px + margin-bottom = 段落间距
         paddingBottom: "8px",
         marginBottom: `${globalSettings?.paragraphSpacing ?? 12}px`,

@@ -5,6 +5,8 @@ export const KAMI = {
   ivory: "#faf9f5",
   border: "#e8e6dc",
   borderSoft: "#e5e3d8",
+  /** 板块分界线（比 border 明显，仍保持暖灰纸感） */
+  rule: "#a29c8b",
   nearBlack: "#141413",
   darkWarm: "#3d3d3a",
   olive: "#504e49",
