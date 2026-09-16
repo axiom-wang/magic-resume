@@ -141,13 +141,15 @@ const BaseInfo = ({
    * 顶部布局与经典模板保持一致：
    * 左侧「头像 + 姓名/职位」，右侧「两列信息网格」。
    * 只对齐结构，视觉仍沿用 kami 的衬线字体与纸感配色。
+   * fields 用「按内容宽度收缩的两列 + 贴向外侧内容边界」：避免等宽列在右侧留下大块空白，
+   * 多出来的空间变成「姓名 ↔ 字段块」的间距（left 贴右、right 贴左，保持镜像对称）
    */
   const layoutStyles = {
     left: {
       container: "flex items-center justify-between gap-6",
       leftContent: "flex items-center gap-6 shrink-0 min-w-0 max-w-[42%]",
       fields:
-        "grid flex-1 min-w-0 grid-cols-2 gap-x-6 gap-y-2 justify-start content-start",
+        "grid flex-1 min-w-0 grid-cols-[auto_auto] gap-x-6 gap-y-2 justify-end content-start",
       nameTitle: "text-left min-w-0 max-w-[16rem] flex-1",
     },
     right: {
@@ -155,7 +157,7 @@ const BaseInfo = ({
       leftContent:
         "flex flex-row-reverse justify-start items-center gap-6 shrink-0 min-w-0 max-w-[42%]",
       fields:
-        "grid flex-1 min-w-0 grid-cols-2 gap-x-6 gap-y-2 justify-start content-start",
+        "grid flex-1 min-w-0 grid-cols-[auto_auto] gap-x-6 gap-y-2 justify-start content-start",
       nameTitle: "text-right min-w-0 max-w-[16rem] flex-1",
     },
     center: {

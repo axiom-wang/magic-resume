@@ -59,9 +59,11 @@ const BaseInfo = ({ basic = {} as BasicInfo, globalSettings, template }: BaseInf
         </motion.div>
     );
 
+    // fields 用「按内容宽度收缩的两列 + 贴向外侧内容边界」：避免等宽列在右侧留下大块空白，
+    // 多出来的空间变成「姓名 ↔ 字段块」的间距（left 布局贴右、right 布局贴左，保持镜像对称）
     const layoutStyles = {
-        left: { container: "flex items-center justify-between gap-6", leftContent: "flex items-center gap-6 shrink-0 min-w-0 max-w-[42%]", fields: "grid flex-1 min-w-0 grid-cols-2 gap-x-6 gap-y-2 justify-start", nameTitle: "text-left min-w-0 max-w-[16rem] flex-1" },
-        right: { container: "flex items-center justify-between gap-6 flex-row-reverse", leftContent: "flex flex-row-reverse justify-start items-center gap-6 shrink-0 min-w-0 max-w-[42%]", fields: "grid flex-1 min-w-0 grid-cols-2 gap-x-6 gap-y-2 justify-start", nameTitle: "text-right min-w-0 max-w-[16rem] flex-1" },
+        left: { container: "flex items-center justify-between gap-6", leftContent: "flex items-center gap-6 shrink-0 min-w-0 max-w-[42%]", fields: "grid flex-1 min-w-0 grid-cols-[auto_auto] gap-x-6 gap-y-2 justify-end content-start", nameTitle: "text-left min-w-0 max-w-[16rem] flex-1" },
+        right: { container: "flex items-center justify-between gap-6 flex-row-reverse", leftContent: "flex flex-row-reverse justify-start items-center gap-6 shrink-0 min-w-0 max-w-[42%]", fields: "grid flex-1 min-w-0 grid-cols-[auto_auto] gap-x-6 gap-y-2 justify-start content-start", nameTitle: "text-right min-w-0 max-w-[16rem] flex-1" },
         center: { container: "flex flex-col items-center gap-3", leftContent: "flex flex-col items-center gap-4", fields: "w-full flex justify-center items-center flex-wrap gap-3", nameTitle: "text-center min-w-0 max-w-full" },
     };
 
