@@ -9,6 +9,7 @@ import {
 } from "@/types/resume";
 import { ResumeTemplate } from "@/types/template";
 import SectionWrapper from "../../shared/SectionWrapper";
+import { getHeaderSpaceStyle } from "../../shared/headerSpacing";
 import { useTranslations, useLocale } from "@/i18n/compat/client";
 import GithubContribution from "@/components/shared/GithubContribution";
 import {
@@ -39,7 +40,8 @@ const BaseInfo = ({
       iconName as keyof typeof Icons
     ] as React.ElementType;
     return IconComponent ? (
-      <IconComponent className="mt-[0.15em] h-3.5 w-3.5 shrink-0" />
+      // 图标尺寸与经典模板一致（14px→16px），避免行盒高度不同
+      <IconComponent className="mt-[0.2em] h-4 w-4 shrink-0" />
     ) : null;
   };
 
@@ -107,15 +109,15 @@ const BaseInfo = ({
     visible: true,
   };
 
-  const showPhoto =
-    Boolean(basic.photo) && basic.photoConfig?.visible !== false;
+  // 与经典模板一致：photoConfig.visible 用真值判断（编辑器写入的 DEFAULT_CONFIG.visible 恒为 true）
+  const showPhoto = Boolean(basic.photo) && basic.photoConfig?.visible;
 
   const PhotoComponent = showPhoto && (
     <motion.div layout="position" className="shrink-0">
       <div
         style={{
-          width: `${basic.photoConfig?.width || 88}px`,
-          height: `${basic.photoConfig?.height || 88}px`,
+          width: `${basic.photoConfig?.width || 100}px`,
+          height: `${basic.photoConfig?.height || 100}px`,
           borderRadius: getBorderRadiusValue(
             basic.photoConfig || {
               borderRadius: "none",
@@ -168,9 +170,9 @@ const BaseInfo = ({
     layoutStyles[layout as keyof typeof layoutStyles] || layoutStyles.left;
 
   return (
-    <SectionWrapper sectionId="basic">
+    <SectionWrapper sectionId="basic" style={getHeaderSpaceStyle()}>
       {/* 头部（基本信息）不出分割线，避免与第一个板块标题的线重复 */}
-      <div className={cn(styles.container, "w-full pb-3")}>
+      <div className={cn(styles.container, "w-full")}>
         <div className={styles.leftContent}>
           {PhotoComponent}
           <div className={cn("flex flex-col", styles.nameTitle)}>
@@ -179,11 +181,10 @@ const BaseInfo = ({
                 layout="position"
                 className="whitespace-normal break-normal [overflow-wrap:normal]"
                 style={{
-                  fontSize: "34px",
+                  // 字号/行高/字距与经典模板一致（34px→30px、去掉 1.1 行高与 0.04em 字距）
+                  fontSize: "30px",
                   fontWeight: 500,
                   color: KAMI.nearBlack,
-                  letterSpacing: "0.04em",
-                  lineHeight: 1.1,
                 }}
               >
                 {basic[nameField.key] as string}
@@ -192,12 +193,12 @@ const BaseInfo = ({
             {titleField.visible !== false && basic[titleField.key] && (
               <motion.p
                 layout="position"
-                className="mt-2 whitespace-normal break-normal [overflow-wrap:normal]"
+                className="whitespace-normal break-normal [overflow-wrap:normal]"
                 style={{
-                  fontSize: "14px",
+                  // 与经典模板一致：18px、无上边距、行高继承
+                  fontSize: "18px",
                   fontWeight: 500,
                   color: themeColor,
-                  lineHeight: 1.3,
                 }}
               >
                 {basic[titleField.key] as string}
@@ -210,7 +211,8 @@ const BaseInfo = ({
           layout="position"
           className={styles.fields}
           style={{
-            fontSize: `${Math.max((globalSettings?.baseFontSize || 13) - 1, 11)}px`,
+            // 与经典模板一致：字段字号用 baseFontSize 原值（不再 -1）
+            fontSize: `${globalSettings?.baseFontSize || 14}px`,
             color: KAMI.stone,
             lineHeight: 1.5,
             maxWidth: layout === "center" ? "none" : "600px",
@@ -222,12 +224,14 @@ const BaseInfo = ({
                 ? item.href
                 : null;
 
+            const VALUE_CLASS = "min-w-0 [overflow-wrap:anywhere]";
+
             const valueNode = customFieldHref ? (
               <a
                 href={customFieldHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline decoration-transparent hover:decoration-current"
+                className={`${VALUE_CLASS} underline decoration-transparent hover:decoration-current`}
                 style={{ color: KAMI.darkWarm }}
               >
                 {item.value}
@@ -235,29 +239,30 @@ const BaseInfo = ({
             ) : item.key === "email" ? (
               <a
                 href={`mailto:${item.value}`}
-                className="underline decoration-transparent hover:decoration-current"
+                className={`${VALUE_CLASS} underline decoration-transparent hover:decoration-current`}
                 style={{ color: KAMI.darkWarm }}
               >
                 {item.value}
               </a>
             ) : (
-              <span style={{ color: KAMI.darkWarm }}>{item.value}</span>
+              <span className={VALUE_CLASS} style={{ color: KAMI.darkWarm }}>
+                {item.value}
+              </span>
             );
 
             return (
-              <motion.div
-                key={item.key}
-                className="flex min-w-0 items-start gap-1.5"
-              >
+              // 与经典模板一致：值节点是 flex 直接子元素（不再多包一层 inline span），
+              // 图标模式间距 gap-1、文字标签模式 gap-2
+              <motion.div key={item.key} className="flex min-w-0 items-start">
                 {useIconMode ? (
-                  <>
-                    <span style={{ color: themeColor }}>{getIcon(item.icon)}</span>
-                    <span className="min-w-0 [overflow-wrap:anywhere]">
-                      {valueNode}
+                  <div className="flex min-w-0 items-start gap-1">
+                    <span style={{ color: themeColor }}>
+                      {getIcon(item.icon)}
                     </span>
-                  </>
+                    {valueNode}
+                  </div>
                 ) : (
-                  <>
+                  <div className="flex min-w-0 items-start gap-2">
                     {!item.custom && (
                       <span className="shrink-0" style={{ color: KAMI.olive }}>
                         {t(`basicPanel.basicFields.${item.key}`)}
@@ -268,10 +273,8 @@ const BaseInfo = ({
                         {item.label}
                       </span>
                     )}
-                    <span className="min-w-0 [overflow-wrap:anywhere]">
-                      {valueNode}
-                    </span>
-                  </>
+                    {valueNode}
+                  </div>
                 )}
               </motion.div>
             );
@@ -281,7 +284,7 @@ const BaseInfo = ({
 
       {basic.githubContributionsVisible && (
         <GithubContribution
-          className="mt-3"
+          className="mt-2"
           githubKey={basic.githubKey}
           username={basic.githubUseName}
         />

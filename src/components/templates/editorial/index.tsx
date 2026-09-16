@@ -11,6 +11,7 @@ import CustomSection from "./sections/CustomSection";
 import SectionTitle from "./sections/SectionTitle";
 import SectionWrapper from "../shared/SectionWrapper";
 import CertificatesSection from "../shared/CertificatesSection";
+import { getHeaderNextSectionStyle } from "../shared/headerSpacing";
 
 interface EditorialTemplateProps {
   data: ResumeData;
@@ -20,6 +21,13 @@ interface EditorialTemplateProps {
 const EditorialTemplate: React.FC<EditorialTemplateProps> = ({ data, template }) => {
   const { colorScheme } = template;
   const enabledSections = data.menuSections.filter((s) => s.enabled).sort((a, b) => a.order - b.order);
+
+  // 顶栏（basic）与下方第一个板块之间的间距固定由 BaseInfo 提供，
+  // 这里抵消该板块自身的 sectionSpacing marginTop（editorial 各 section 的 fallback 是 32），
+  // 同时把 basic 外层 wrapper 的 mb-1(4px) 归零，保证总留白恰好 HEADER_BOTTOM_SPACE
+  const sectionSpacing = data.globalSettings?.sectionSpacing;
+  const basicIndex = enabledSections.findIndex((s) => s.id === "basic");
+  const headerNextSectionId = basicIndex >= 0 ? enabledSections[basicIndex + 1]?.id : undefined;
 
   const renderSection = (sectionId: string) => {
     switch (sectionId) {
@@ -63,7 +71,17 @@ const EditorialTemplate: React.FC<EditorialTemplateProps> = ({ data, template })
       }}
     >
       {enabledSections.map((section) => (
-        <div key={section.id} className="w-full mb-1 border-none ring-0">
+        <div
+          key={section.id}
+          className="w-full mb-1 border-none ring-0"
+          style={
+            section.id === "basic"
+              ? { marginBottom: 0 }
+              : section.id === headerNextSectionId
+                ? getHeaderNextSectionStyle(sectionSpacing, 32)
+                : undefined
+          }
+        >
           {renderSection(section.id)}
         </div>
       ))}

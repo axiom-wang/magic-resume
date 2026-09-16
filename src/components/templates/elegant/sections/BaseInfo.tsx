@@ -5,6 +5,7 @@ import { cn, formatDateString } from "@/lib/utils";
 import { BasicInfo, getBorderRadiusValue, GlobalSettings } from "@/types/resume";
 import { ResumeTemplate } from "@/types/template";
 import SectionWrapper from "../../shared/SectionWrapper";
+import { getHeaderSpaceStyle } from "../../shared/headerSpacing";
 import { useTranslations, useLocale } from "@/i18n/compat/client";
 import GithubContribution from "@/components/shared/GithubContribution";
 import { getCustomFieldDisplayText, getCustomFieldHref, shouldShowCustomFieldLabelPrefix } from "@/lib/customField";
@@ -67,7 +68,7 @@ const BaseInfo = ({ basic = {} as BasicInfo, globalSettings, template }: BaseInf
     const styles = layoutStyles[layout as keyof typeof layoutStyles] || layoutStyles.left;
 
     return (
-        <SectionWrapper sectionId="basic">
+        <SectionWrapper sectionId="basic" style={getHeaderSpaceStyle()}>
             <div className={styles.container}>
                 <div className={styles.leftContent}>
                     {PhotoComponent}

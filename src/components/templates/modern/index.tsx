@@ -78,7 +78,8 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ data, template }) => {
                     >
                         {basicSection && renderSection(basicSection.id)}
                         {educationSection && (
-                            <div className="mt-6">
+                            // 顶栏与 education 之间的间距固定由 BaseInfo 提供，这里不再加 mt-6
+                            <div>
                                 <EducationSection education={data.education} globalSettings={data.globalSettings} variant="sidebar" />
                             </div>
                         )}

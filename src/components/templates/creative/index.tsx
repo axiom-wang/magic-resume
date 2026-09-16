@@ -12,6 +12,7 @@ import CustomSection from "./sections/CustomSection";
 import SectionTitle from "./sections/SectionTitle";
 import SectionWrapper from "../shared/SectionWrapper";
 import CertificatesSection from "../shared/CertificatesSection";
+import { HEADER_BOTTOM_SPACE } from "../shared/headerSpacing";
 
 
 interface CreativeTemplateProps {
@@ -25,6 +26,11 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ data, template }) =
 
     const basicSection = enabledSections.find((s) => s.id === "basic");
     const otherSections = enabledSections.filter((s) => s.id !== "basic");
+
+    // 顶栏（basic）与下方第一个板块之间的间距固定为 HEADER_BOTTOM_SPACE，不受「模块间距」影响。
+    // creative 的顶栏是带背景色的独立色块，所以这段固定留白要落在色块**外面**（色块自身 py-8 保持不变），
+    // 否则第一个板块会紧贴色块下边缘。
+    const headerNextSectionId = otherSections[0]?.id;
 
     const renderSection = (sectionId: string) => {
         switch (sectionId) {
@@ -71,7 +77,16 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ data, template }) =
             {/* Content sections */}
             <div className=" w-full w-max-4xl mx-auto">
                 {otherSections.map((section) => (
-                    <div key={section.id}>{renderSection(section.id)}</div>
+                    <div
+                        key={section.id}
+                        style={
+                            section.id === headerNextSectionId
+                                ? { marginTop: `${HEADER_BOTTOM_SPACE}px` }
+                                : undefined
+                        }
+                    >
+                        {renderSection(section.id)}
+                    </div>
                 ))}
             </div>
         </div>

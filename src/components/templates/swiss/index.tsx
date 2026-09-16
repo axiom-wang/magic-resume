@@ -11,6 +11,7 @@ import CustomSection from "./sections/CustomSection";
 import SectionTitle from "./sections/SectionTitle";
 import SectionWrapper from "../shared/SectionWrapper";
 import CertificatesSection from "../shared/CertificatesSection";
+import { getHeaderNextSectionStyle } from "../shared/headerSpacing";
 
 interface SwissTemplateProps {
     data: ResumeData;
@@ -20,6 +21,12 @@ interface SwissTemplateProps {
 const SwissTemplate: React.FC<SwissTemplateProps> = ({ data, template }) => {
     const { colorScheme } = template;
     const enabledSections = data.menuSections.filter((s) => s.enabled).sort((a, b) => a.order - b.order);
+
+    // 顶栏（basic）与下方第一个板块之间的间距固定由 BaseInfo 提供，
+    // 这里抵消该板块自身的 sectionSpacing marginTop，使其不受「模块间距」影响
+    const sectionSpacing = data.globalSettings?.sectionSpacing;
+    const basicIndex = enabledSections.findIndex((s) => s.id === "basic");
+    const headerNextSectionId = basicIndex >= 0 ? enabledSections[basicIndex + 1]?.id : undefined;
 
     const renderSection = (sectionId: string) => {
         switch (sectionId) {
@@ -62,7 +69,11 @@ const SwissTemplate: React.FC<SwissTemplateProps> = ({ data, template }) => {
             }}
         >
             {enabledSections.map((section) => (
-                <div key={section.id} className="w-full">
+                <div
+                    key={section.id}
+                    className="w-full"
+                    style={section.id === headerNextSectionId ? getHeaderNextSectionStyle(sectionSpacing) : undefined}
+                >
                     {renderSection(section.id)}
                 </div>
             ))}

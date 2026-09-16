@@ -11,6 +11,7 @@ import CustomSection from "./sections/CustomSection";
 import SectionTitle from "./sections/SectionTitle";
 import SectionWrapper from "../shared/SectionWrapper";
 import CertificatesSection from "../shared/CertificatesSection";
+import { getHeaderNextSectionStyle } from "../shared/headerSpacing";
 
 
 interface ElegantTemplateProps {
@@ -21,6 +22,12 @@ interface ElegantTemplateProps {
 const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data, template }) => {
     const { colorScheme } = template;
     const enabledSections = data.menuSections.filter((s) => s.enabled).sort((a, b) => a.order - b.order);
+
+    // 顶栏（basic）与下方第一个板块之间的间距固定由 BaseInfo 提供，
+    // 这里抵消该板块自身的 sectionSpacing marginTop，使其不受「模块间距」影响
+    const sectionSpacing = data.globalSettings?.sectionSpacing;
+    const basicIndex = enabledSections.findIndex((s) => s.id === "basic");
+    const headerNextSectionId = basicIndex >= 0 ? enabledSections[basicIndex + 1]?.id : undefined;
 
     const renderSection = (sectionId: string) => {
         switch (sectionId) {
@@ -57,7 +64,13 @@ const ElegantTemplate: React.FC<ElegantTemplateProps> = ({ data, template }) => 
         <div className="flex flex-col w-full min-h-screen items-center" style={{ backgroundColor: colorScheme.background, color: colorScheme.text }}>
             <div className="w-full max-w-4xl">
                 {enabledSections.map((section) => (
-                    <div key={section.id} className="w-full">{renderSection(section.id)}</div>
+                    <div
+                        key={section.id}
+                        className="w-full"
+                        style={section.id === headerNextSectionId ? getHeaderNextSectionStyle(sectionSpacing) : undefined}
+                    >
+                        {renderSection(section.id)}
+                    </div>
                 ))}
             </div>
         </div>

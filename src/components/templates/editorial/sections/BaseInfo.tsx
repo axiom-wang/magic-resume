@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 import { BasicInfo, GlobalSettings, getBorderRadiusValue } from "@/types/resume";
 import SectionWrapper from "../../shared/SectionWrapper";
+import { getHeaderSpaceStyle } from "../../shared/headerSpacing";
 import { formatDateString } from "@/lib/utils";
 import { useLocale, useTranslations } from "@/i18n/compat/client";
 import { getCustomFieldDisplayText, getCustomFieldHref, shouldShowCustomFieldLabelPrefix } from "@/lib/customField";
@@ -64,7 +65,7 @@ const BaseInfo: React.FC<BaseInfoProps> = ({ basic, globalSettings }) => {
   const showPhoto = basic.photo && basic.photoConfig?.visible;
 
   return (
-    <SectionWrapper sectionId="basic" className=" w-full">
+    <SectionWrapper sectionId="basic" className=" w-full" style={getHeaderSpaceStyle()}>
       <div className="flex flex-col w-full">
         <div className="flex items-center justify-between gap-6">
           <div className="flex-1 min-w-0">

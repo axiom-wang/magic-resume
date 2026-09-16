@@ -67,7 +67,9 @@ const TimelineTemplate: React.FC<TimelineTemplateProps> = ({ data, template }) =
         <div className="flex flex-col w-full min-h-screen pl-[6px]" style={{ backgroundColor: colorScheme.background, color: colorScheme.text }}>
             {enabledSections.map((section) => {
                 if (section.id === "basic") {
-                    return <div key={section.id} className="mb-4">{renderSection(section.id)}</div>;
+                    // 顶栏与下方第一个板块的间距固定由 BaseInfo 提供，这里不再额外加 mb-4；
+                    // 注意：非 basic 板块内部还有「时间线标题 → 内容」的 marginTop，不能被抵消
+                    return <div key={section.id}>{renderSection(section.id)}</div>;
                 }
                 const sectionTitle = data.menuSections.find((s) => s.id === section.id)?.title || section.id;
                 return (

@@ -43,12 +43,11 @@ const SectionTitle = ({
       }}
     >
       <h3
-        className="font-medium tracking-wide"
+        className="font-medium"
         style={{
           fontSize: `${globalSettings?.headerSize || 18}px`,
           color: KAMI.nearBlack,
           fontWeight: 500,
-          lineHeight: 1.25,
         }}
       >
         <span><TitleLink link={menuSections.find((s) => s.id === (sectionId ?? type))?.link} label={renderTitle} /></span>
