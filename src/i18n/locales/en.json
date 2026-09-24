@@ -257,6 +257,10 @@
       "kami": {
         "name": "Kami",
         "description": "Warm parchment canvas with ink-blue accents and serif editorial typography — quiet, formal, print-ready"
+      },
+      "insta360": {
+        "name": "Insta360",
+        "description": "Insta360 brand visual: mist-grey sidebar plus a rounded white main card in a two-column layout, with Insta Yellow number badges"
       }
     }
   },

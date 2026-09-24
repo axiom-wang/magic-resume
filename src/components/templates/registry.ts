@@ -12,6 +12,7 @@ import { creativeConfig } from "./creative/config";
 import { editorialConfig } from "./editorial/config";
 import { swissConfig } from "./swiss/config";
 import { kamiConfig } from "./kami/config";
+import { insta360Config } from "./insta360/config";
 
 // Import components
 import ClassicTemplate from "./classic";
@@ -24,6 +25,7 @@ import CreativeTemplate from "./creative";
 import EditorialTemplate from "./editorial";
 import SwissTemplate from "./swiss";
 import KamiTemplate from "./kami";
+import Insta360Template from "./insta360";
 
 export interface TemplateRegistryEntry {
   config: ResumeTemplate;
@@ -46,6 +48,7 @@ export const TEMPLATE_REGISTRY: TemplateRegistryEntry[] = [
   { config: editorialConfig, Component: EditorialTemplate },
   { config: swissConfig, Component: SwissTemplate },
   { config: kamiConfig, Component: KamiTemplate },
+  { config: insta360Config, Component: Insta360Template },
 ];
 
 /** All template configs — drop-in replacement for the old DEFAULT_TEMPLATES */

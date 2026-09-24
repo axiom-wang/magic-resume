@@ -27,6 +27,7 @@ const ALL = [
   "editorial",
   "swiss",
   "kami",
+  // insta360 已改造为双栏版式（basic 在侧栏），25px 顶栏间距规则不再适用
 ];
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : ALL;
 
