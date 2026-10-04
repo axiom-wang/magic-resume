@@ -49,7 +49,7 @@ const DragHandle = ({ show = true }) => {
       <div
         className={cn(
           "absolute top-1/2 left-1/2 z-20 h-7 w-2 -translate-x-1/2 -translate-y-1/2",
-          "rounded-full border border-border/80 bg-white dark:bg-neutral-900 shadow-sm", // 强制实体背景
+          "rounded-full border border-border/80 bg-white dark:bg-card shadow-sm", // 强制实体背景
           "transition-all duration-200",
           "group-hover:border-primary/50 group-hover:scale-110",
           "group-active:border-primary group-active:scale-105"
@@ -280,14 +280,13 @@ export default function Home() {
   return (
     <main
       className={cn(
-        "w-full min-h-screen  overflow-hidden",
-        "w-full min-h-screen overflow-hidden",
+        "flex h-screen h-[100dvh] w-full flex-col overflow-hidden",
         "bg-background text-foreground"
       )}
     >
       <EditorHeader />
       {/* 桌面端布局 */}
-      <div className="hidden md:block h-[calc(100vh-64px)] relative flex w-full">
+      <div className="relative hidden min-h-0 flex-1 w-full md:block">
         <div className={cn(
           "h-full transition-all duration-300",
           previewPanelCollapsed ? "w-[calc(100%-4rem)]" : "w-full"
@@ -340,7 +339,7 @@ export default function Home() {
               order={3}
               collapsible={false}
               defaultSize={panelSizes?.[2]}
-              className={cn("bg-gray-100", previewPanelCollapsed && "hidden")}
+              className={cn("bg-gray-100 dark:bg-background", previewPanelCollapsed && "hidden")}
             >
               <div
                 className="h-full overflow-y-auto"
@@ -371,7 +370,7 @@ export default function Home() {
       </div>
 
       {/* 移动端布局 */}
-      <div className="md:hidden h-[calc(100vh-64px)]">
+      <div className="min-h-0 flex-1 md:hidden">
         <MobileWorkbench />
       </div>
     </main>

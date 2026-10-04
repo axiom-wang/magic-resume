@@ -33,7 +33,7 @@ const data = {
 await writeFile(`${output}/fixture.json`, JSON.stringify(data));
 const browser = await chromium.launch();
 try {
-  for (const templateId of ["kami", "classic", "modern", "creative", "elegant", "swiss", "minimalist", "editorial", "left-right", "timeline"]) {
+  for (const templateId of ["kami", "insta360", "classic", "modern", "creative", "elegant", "swiss", "minimalist", "editorial", "left-right", "timeline"]) {
     const page = await browser.newPage({ viewport: { width: 900, height: 1200 } });
     await page.addInitScript(d => { (window as any).__MAGIC_RESUME_DATA__ = d; }, { ...data, templateId });
     await page.goto(`${baseUrl}/app/preview-resume?snapshot=1`, { waitUntil: "networkidle" });

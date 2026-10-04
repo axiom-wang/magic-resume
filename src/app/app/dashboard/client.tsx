@@ -27,7 +27,7 @@ interface MenuItem {
   title: string;
   url?: string;
   href?: string;
-  icon: any;
+  icon: typeof IconResumes;
   items?: { title: string; href: string }[];
 }
 
@@ -81,8 +81,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      <SidebarProvider open={open} onOpenChange={setOpen}>
+    <div className="flex h-dvh overflow-hidden bg-background">
+      <SidebarProvider className="min-h-0" open={open} onOpenChange={setOpen}>
         <Sidebar
           collapsible={collapsible}
           className="border-r border-border/40 bg-card/50 backdrop-blur-xl"
@@ -115,19 +115,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                               <SidebarMenuButton
                                 asChild
                                 isActive={active}
-                                className={`w-full transition-all duration-200 ease-in-out h-12 mb-1 [&>svg]:size-auto ${active
-                                  ? "bg-primary/10 text-primary font-bold hover:bg-primary/20 hover:text-primary"
+                                className={`w-full transition-colors duration-200 h-12 mb-1 [&>svg]:size-5 ${active
+                                  ? "bg-primary/10 text-primary font-medium hover:bg-primary/20 hover:text-primary"
                                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                                   }`}
                               >
                                 <div
-                                  className="flex items-center gap-2 px-2 cursor-pointer"
+                                  className="flex items-center gap-3 px-2 cursor-pointer"
                                   onClick={() => handleItemClick(item)}
                                 >
-                                  <item.icon
-                                    size={24}
-                                    active={active}
-                                  />
+                                  <item.icon />
                                   {open && (
                                     <span className="flex-1 text-sm">
                                       {item.title}
@@ -168,11 +165,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           </SidebarContent>
           <SidebarFooter />
         </Sidebar>
-        <main className="flex-1 flex flex-col">
-          <div className="p-2">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <div className="shrink-0 p-2">
             <SidebarTrigger />
           </div>
-          <div className="flex-1">{children}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
         </main>
       </SidebarProvider>
     </div>

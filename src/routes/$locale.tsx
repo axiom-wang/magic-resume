@@ -26,7 +26,7 @@ function getLocaleSeo(locale: Locale) {
     description,
     localeTag,
     canonical,
-    alternateLocale
+    alternateLocale,
   };
 }
 
@@ -50,21 +50,35 @@ export const Route = createFileRoute("/$locale")({
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: seo.title },
         { name: "twitter:description", content: seo.description },
-        { name: "twitter:image", content: `${SEO_BASE_URL}/web-shot.png` }
+        { name: "twitter:image", content: `${SEO_BASE_URL}/web-shot.png` },
       ],
       links: [
+        {
+          rel: "preload",
+          href: "/fonts/landing/source-han-serif-500.woff2",
+          as: "font",
+          type: "font/woff2",
+          crossOrigin: "anonymous" as const,
+        },
+        ...[400, 700].map((weight) => ({
+          rel: "preload",
+          href: `/fonts/landing/misans-${weight}.woff2`,
+          as: "font",
+          type: "font/woff2",
+          crossOrigin: "anonymous" as const,
+        })),
         { rel: "canonical", href: seo.canonical },
         { rel: "alternate", hrefLang: locale, href: seo.canonical },
         {
           rel: "alternate",
           hrefLang: seo.alternateLocale,
-          href: `${SEO_BASE_URL}/${seo.alternateLocale}`
+          href: `${SEO_BASE_URL}/${seo.alternateLocale}`,
         },
-        { rel: "alternate", hrefLang: "x-default", href: `${SEO_BASE_URL}/zh` }
-      ]
+        { rel: "alternate", hrefLang: "x-default", href: `${SEO_BASE_URL}/zh` },
+      ],
     };
   },
-  component: LocaleLandingPage
+  component: LocaleLandingPage,
 });
 
 function LocaleLandingPage() {

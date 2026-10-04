@@ -19,7 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAIConfigStore } from "@/store/useAIConfigStore";
-import { AI_MODEL_CONFIGS } from "@/config/ai";
+import { pdfImportErrorMessage } from "@/lib/pdf-import-client";
+import { ResumeImportError } from "@/lib/resume-import-schema";
+import { getTaskModel, isModelConfigured, toAIConnection } from "@/config/ai-models";
 import { cn } from "@/lib/utils";
 
 interface AIPolishDialogProps {
@@ -49,22 +51,11 @@ export default function AIPolishDialog({
   onApply
 }: AIPolishDialogProps) {
   const t = useTranslations("aiPolishDialog");
+  const allTranslations = useTranslations();
   const [isPolishing, setIsPolishing] = useState(false);
   const [polishedContent, setPolishedContent] = useState("");
   const [customInstructions, setCustomInstructions] = useState("");
-  const {
-    selectedModel,
-    doubaoApiKey,
-    doubaoModelId,
-    deepseekApiKey,
-    deepseekModelId,
-    openaiApiKey,
-    openaiModelId,
-    openaiApiEndpoint,
-    geminiApiKey,
-    geminiModelId,
-    isConfigured
-  } = useAIConfigStore();
+  const aiConfig = useAIConfigStore();
   const abortControllerRef = useRef<AbortController | null>(null);
   const polishedContentRef = useRef<HTMLDivElement>(null);
 
@@ -84,10 +75,12 @@ export default function AIPolishDialog({
 
       if (contentType.includes("application/json") || rawText.startsWith("{")) {
         const data = JSON.parse(rawText) as {
+          code?: string;
           error?: string | { message?: string };
           message?: string;
         };
 
+        if (data.code) return pdfImportErrorMessage(new ResumeImportError(data.code), allTranslations);
         if (typeof data.error === "string" && data.error.trim()) {
           return data.error.trim();
         }
@@ -113,7 +106,8 @@ export default function AIPolishDialog({
 
   const handlePolish = async () => {
     try {
-      if (!isConfigured()) {
+      const model = getTaskModel(aiConfig, "text");
+      if (!isModelConfigured(model)) {
         toast.error(t("error.configRequired"));
         return;
       }
@@ -123,24 +117,6 @@ export default function AIPolishDialog({
 
       abortControllerRef.current = new AbortController();
 
-      const config = AI_MODEL_CONFIGS[selectedModel];
-      const apiKey =
-        selectedModel === "doubao"
-          ? doubaoApiKey
-          : selectedModel === "openai"
-            ? openaiApiKey
-            : selectedModel === "gemini"
-              ? geminiApiKey
-              : deepseekApiKey;
-      const modelId =
-        selectedModel === "doubao"
-          ? doubaoModelId
-          : selectedModel === "openai"
-            ? openaiModelId
-            : selectedModel === "gemini"
-              ? geminiModelId
-              : deepseekModelId;
-
       const response = await fetch("/api/polish", {
         method: "POST",
         headers: {
@@ -148,10 +124,7 @@ export default function AIPolishDialog({
         },
         body: JSON.stringify({
           content: turndownService.turndown(content),
-          apiKey,
-          apiEndpoint: selectedModel === "openai" ? openaiApiEndpoint : undefined,
-          model: config.requiresModelId ? modelId : config.defaultModel,
-          modelType: selectedModel,
+          connection: toAIConnection(model),
           customInstructions: customInstructions.trim() || undefined
         }),
         signal: abortControllerRef.current.signal
@@ -173,9 +146,11 @@ export default function AIPolishDialog({
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
+        const chunk = decoder.decode(value, { stream: true });
         setPolishedContent((prev) => prev + chunk);
       }
+      const tail = decoder.decode();
+      if (tail) setPolishedContent((prev) => prev + tail);
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
         console.log("Polish aborted");
@@ -236,8 +211,8 @@ export default function AIPolishDialog({
       <DialogContent
         className={cn(
           "sm:max-w-[1000px]",
-          "bg-white dark:bg-neutral-900",
-          "border-neutral-200 dark:border-neutral-800",
+          "bg-white dark:bg-popover",
+          "border-neutral-200 dark:border-border",
           "rounded-2xl shadow-2xl dark:shadow-none"
         )}
         onPointerDownOutside={(e) => {
@@ -254,13 +229,12 @@ export default function AIPolishDialog({
           <DialogTitle
             className={cn(
               "flex items-center gap-2 text-2xl",
-              "text-neutral-800 dark:text-neutral-100"
+              "text-neutral-800 dark:text-foreground"
             )}
           >
             <Sparkles
               className={cn(
-                "h-6 w-6 text-primary animate-pulse",
-                "dark:text-primary-400"
+                "h-6 w-6 text-primary"
               )}
             />
             {t("title")}
@@ -268,7 +242,7 @@ export default function AIPolishDialog({
           <DialogDescription
             className={cn(
               "text-base",
-              "text-neutral-600 dark:text-neutral-400"
+              "text-neutral-600 dark:text-muted-foreground"
             )}
           >
             {isPolishing
@@ -284,7 +258,7 @@ export default function AIPolishDialog({
             htmlFor="custom-instructions"
             className={cn(
               "text-sm font-medium",
-              "text-neutral-600 dark:text-neutral-400"
+              "text-neutral-600 dark:text-muted-foreground"
             )}
           >
             {t("customInstructions")}
@@ -298,10 +272,10 @@ export default function AIPolishDialog({
             rows={2}
             className={cn(
               "resize-none rounded-xl border",
-              "bg-neutral-50 dark:bg-neutral-800/50",
-              "border-neutral-200 dark:border-neutral-800",
-              "text-neutral-700 dark:text-neutral-300",
-              "placeholder:text-neutral-400 dark:placeholder:text-neutral-500"
+              "bg-neutral-50 dark:bg-secondary/50",
+              "border-neutral-200 dark:border-border",
+              "text-neutral-700 dark:text-foreground/85",
+              "placeholder:text-neutral-400 dark:placeholder:text-muted-foreground"
             )}
           />
         </div>
@@ -312,13 +286,13 @@ export default function AIPolishDialog({
               <div
                 className={cn(
                   "w-1.5 h-1.5 rounded-full",
-                  "bg-neutral-500 dark:bg-neutral-600"
+                  "bg-neutral-500 dark:bg-muted-foreground"
                 )}
               ></div>
               <span
                 className={cn(
                   "text-sm font-medium",
-                  "text-neutral-600 dark:text-neutral-400"
+                  "text-neutral-600 dark:text-muted-foreground"
                 )}
               >
                 {t("content.original")}
@@ -327,15 +301,15 @@ export default function AIPolishDialog({
             <div
               className={cn(
                 "relative rounded-xl border",
-                "bg-neutral-50 dark:bg-neutral-800/50",
-                "border-neutral-200 dark:border-neutral-800",
+                "bg-neutral-50 dark:bg-secondary/50",
+                "border-neutral-200 dark:border-border",
                 "p-6 h-[400px] overflow-auto shadow-sm"
               )}
             >
               <Streamdown
                 className={cn(
                   "prose dark:prose-invert max-w-none",
-                  "text-neutral-700 dark:text-neutral-300"
+                  "text-neutral-700 dark:text-foreground/85"
                 )}
               >
                 {turndownService.turndown(content)}
@@ -354,7 +328,7 @@ export default function AIPolishDialog({
               <span
                 className={cn(
                   "text-sm font-medium",
-                  "text-primary dark:text-primary-400"
+                  "text-primary"
                 )}
               >
                 {t("content.polished")}
@@ -364,8 +338,8 @@ export default function AIPolishDialog({
               ref={polishedContentRef}
               className={cn(
                 "relative rounded-xl border",
-                "bg-primary/[0.03] dark:bg-primary/[0.1]",
-                "border-primary/20 dark:border-primary/30",
+                "bg-primary/[0.03] dark:bg-secondary/50",
+                "border-primary/20 dark:border-border",
                 "p-6 h-[400px] overflow-auto shadow-sm scroll-smooth"
               )}
             >
@@ -374,7 +348,7 @@ export default function AIPolishDialog({
                 isAnimating={isPolishing}
                 className={cn(
                   "prose dark:prose-invert max-w-none",
-                  "text-neutral-800 dark:text-neutral-200"
+                  "text-neutral-800 dark:text-foreground"
                 )}
               >
                 {polishedContent}
@@ -387,7 +361,8 @@ export default function AIPolishDialog({
           <Button
             onClick={handlePolish}
             disabled={isPolishing}
-            className="flex-1 bg-gradient-to-r from-[#9333EA] to-[#EC4899] hover:opacity-90 text-white border-none h-11 shadow-lg shadow-purple-500/20"
+            variant="secondary"
+            className="flex-1 h-11"
           >
             {isPolishing ? (
               <div className="flex items-center gap-2">
@@ -404,7 +379,7 @@ export default function AIPolishDialog({
           <Button
             onClick={handleApply}
             disabled={!polishedContent || isPolishing}
-            className="flex-1 bg-primary hover:bg-primary/90 text-white h-11 shadow-lg shadow-primary/20"
+            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground h-11"
           >
             {t("button.apply")}
           </Button>

@@ -2,7 +2,6 @@ import { TitleLink } from "../../shared/TitleLink";
 import { useMemo } from "react";
 import { GlobalSettings } from "@/types/resume";
 import { useTemplateContext } from "../../TemplateContext";
-import { useResumeStore } from "@/store/useResumeStore";
 import { cn } from "@/lib/utils";
 
 interface SectionTitleProps {
@@ -15,9 +14,8 @@ interface SectionTitleProps {
 }
 
 const SectionTitle = ({ type, sectionId, title, globalSettings, showTitle = true, variant = "default" }: SectionTitleProps) => {
-    const { activeResume } = useResumeStore();
     const templateContext = useTemplateContext();
-    const menuSections = templateContext?.menuSections ?? activeResume?.menuSections ?? [];
+    const menuSections = templateContext?.menuSections ?? [];
 
     const renderTitle = useMemo(() => {
         if (type === "custom") return title;

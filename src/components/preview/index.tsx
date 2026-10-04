@@ -1,6 +1,5 @@
 
-import React, { useEffect, useMemo, useState, useRef } from "react";
-import throttle from "lodash/throttle";
+import React, { useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { DEFAULT_TEMPLATES } from "@/config";
 import { cn } from "@/lib/utils";
@@ -8,6 +7,7 @@ import { useResumeStore } from "@/store/useResumeStore";
 import { useAutoOnePage } from "@/hooks/useAutoOnePage";
 import { useTranslations } from "@/i18n/compat/client";
 import { normalizeFontFamily } from "@/utils/fonts";
+import { A4_HEIGHT_PX, RESUME_LAYOUT_CSS } from "@/utils/resumeLayout";
 import ResumeTemplateComponent from "../templates";
 
 interface PreviewPanelProps {
@@ -80,63 +80,14 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
     const previewRef = useRef<HTMLDivElement>(null);
     const internalResumeContentRef = useRef<HTMLDivElement>(null);
     const resumeContentRef = (ref as React.MutableRefObject<HTMLDivElement>) || internalResumeContentRef;
-    const [contentHeight, setContentHeight] = useState(0);
-
-    const updateContentHeight = () => {
-      if (resumeContentRef.current) {
-        const height = resumeContentRef.current.clientHeight;
-        if (height > 0) {
-          if (height !== contentHeight) {
-            setContentHeight(height);
-          }
-        }
-      }
-    };
-
-    useEffect(() => {
-      const debouncedUpdate = throttle(() => {
-        requestAnimationFrame(() => {
-          updateContentHeight();
-        });
-      }, 100);
-
-      const observer = new MutationObserver(debouncedUpdate);
-
-      if (resumeContentRef.current) {
-        observer.observe(resumeContentRef.current, {
-          childList: true,
-          subtree: true,
-          attributes: true,
-          characterData: true,
-        });
-
-        updateContentHeight();
-      }
-
-      const resizeObserver = new ResizeObserver(debouncedUpdate);
-
-      if (resumeContentRef.current) {
-        resizeObserver.observe(resumeContentRef.current);
-      }
-
-      return () => {
-        observer.disconnect();
-        resizeObserver.disconnect();
-      };
-    }, []);
-
-    useEffect(() => {
-      if (activeResume) {
-        const timer = setTimeout(updateContentHeight, 300);
-        return () => clearTimeout(timer);
-      }
-    }, [activeResume]);
-
     const pagePadding = activeResume?.globalSettings?.pagePadding || 0;
     const autoOnePageEnabled = activeResume?.globalSettings?.autoOnePage || false;
+    const pageBreakLinesVisible =
+      activeResume?.globalSettings?.pageBreakLinesVisible !== false;
 
-    const { scaleFactor, isScaled, cannotFit } = useAutoOnePage({
-      contentHeight,
+    const { contentHeight, scaleFactor, isScaled, cannotFit } = useAutoOnePage({
+      contentRef: resumeContentRef,
+      content: activeResume,
       pagePadding,
       enabled: autoOnePageEnabled,
     });
@@ -150,9 +101,6 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
     }, [cannotFit, t]);
 
     const { contentPerPagePx, pageBreakCount } = useMemo(() => {
-      const MM_TO_PX = 3.78;
-      const A4_HEIGHT_PX = 297 * MM_TO_PX;
-
       // 与 Puppeteer PDF 导出一致：margin: pagePadding px（上下各一份）
       // 每页可用内容高度 = A4 总高度 - 上 margin - 下 margin
       const baseContentPerPage = A4_HEIGHT_PX - 2 * pagePadding;
@@ -163,11 +111,8 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
         return { contentPerPagePx: baseContentPerPage, pageBreakCount: 0 };
       }
 
-      // 缩放时，在容器本地坐标系下每页能容纳更多内容
-      // 因为视觉上 effectiveContentPerPage * scaleFactor = baseContentPerPage
-      const effectiveContentPerPage = isScaled
-        ? baseContentPerPage / scaleFactor
-        : baseContentPerPage;
+      // 页边距不缩放，contentHeight 已经是最终显示高度。
+      const effectiveContentPerPage = baseContentPerPage;
 
       // contentHeight 包含 #resume-preview 的 padding（上+下）
       // 实际内容高度 = contentHeight - 2 * pagePadding
@@ -199,7 +144,7 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
     return (
       <div
         ref={previewRef}
-        className="relative w-full h-full  bg-gray-100"
+        className="relative w-full h-full bg-gray-100 dark:bg-background"
         style={{
           fontFamily: selectedFontFamily,
         }}
@@ -210,7 +155,7 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
             className={cn(
               "w-[210mm] min-w-[210mm] min-h-[297mm]",
               "shadow-lg",
-              "relative mx-auto"
+              "relative mx-auto self-start"
             )}
             style={{
               backgroundColor: template.colorScheme.background || "#ffffff",
@@ -219,18 +164,13 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
             <div
               ref={resumeContentRef}
               id="resume-preview"
+              data-resume-document
               onClickCapture={handlePreviewClickCapture}
               style={{
                 fontFamily: selectedFontFamily,
-                padding: `${activeResume.globalSettings?.pagePadding}px`,
+                padding: `${pagePadding}px`,
+                width: "100%",
                 backgroundColor: template.colorScheme.background || "#ffffff",
-                ...(isScaled
-                  ? {
-                    transform: `scale(${scaleFactor})`,
-                    transformOrigin: "top left",
-                    width: `${100 / scaleFactor}%`,
-                  }
-                  : {}),
               }}
               className="relative"
             >
@@ -273,10 +213,13 @@ const PreviewPanel = React.forwardRef<HTMLDivElement, PreviewPanelProps>(
                 }
               }
             `}</style>
-              <ResumeTemplateComponent data={activeResume} template={template} />
-              {contentHeight > 0 && (
+              <style>{RESUME_LAYOUT_CSS}</style>
+              <div data-resume-content style={{ width: "100%", display: "flow-root", zoom: scaleFactor }}>
+                <ResumeTemplateComponent data={activeResume} template={template} />
+              </div>
+              {pageBreakLinesVisible && contentHeight > 0 && (
                 <>
-                  <div key={`page-breaks-container-${contentHeight}`}>
+                  <div>
                     {Array.from(
                       { length: Math.min(pageBreakCount, 20) },
                       (_, i) => {

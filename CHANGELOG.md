@@ -1,5 +1,53 @@
 # Changelog
 
+## v2.0.9
+
+[compare changes](https://github.com/JOYCEQL/magic-resume/compare/v2.0.8...v2.0.9)
+
+### 🚀 Enhancements
+
+- Implement multi-model AI configuration, PDF import, and state migration ([6407663](https://github.com/JOYCEQL/magic-resume/commit/6407663))
+
+### 🩹 Fixes
+
+- Use runtime-safe AI provider networking ([0181e37](https://github.com/JOYCEQL/magic-resume/commit/0181e37))
+- Stop auto one-page preview layout oscillation and add browser regression coverage ([a9df7c5](https://github.com/JOYCEQL/magic-resume/commit/a9df7c5), [#384](https://github.com/JOYCEQL/magic-resume/issues/384))
+
+
+## v2.0.8
+
+[compare changes](https://github.com/JOYCEQL/magic-resume/compare/v2.0.7...main)
+
+### 🚀 Enhancements
+
+- Add long-page PDF export ([5351db3](https://github.com/JOYCEQL/magic-resume/commit/5351db3))
+- Add single long PNG export ([ba4f46b](https://github.com/JOYCEQL/magic-resume/commit/ba4f46b))
+- Add font preloading in ResumeWorkbench and optimize SectionTitle by removing unnecessary store dependencies ([0a08e50](https://github.com/JOYCEQL/magic-resume/commit/0a08e50))
+
+### ❤️ Contributors
+
+- JOYCEQL <1449239013@qq.com>
+- Furina <3559551198@qq.com>
+
+## v2.0.7
+
+[compare changes](https://github.com/JOYCEQL/magic-resume/compare/v2.0.6...main)
+
+### 🚀 Enhancements
+
+- Implement custom section deletion, improve ID generation logic, and add storage safety checks ([e356d9d](https://github.com/JOYCEQL/magic-resume/commit/e356d9d))
+- Switch to content tab automatically upon new section creation in SidePanel ([f286738](https://github.com/JOYCEQL/magic-resume/commit/f286738))
+- Integrate react-grab development utility for runtime inspection ([ce3cd2e](https://github.com/JOYCEQL/magic-resume/commit/ce3cd2e))
+- Update navigation to support parameter objects and add error-safe persistence to resume store ([f1fc952](https://github.com/JOYCEQL/magic-resume/commit/f1fc952))
+- Implement undo/redo functionality and fix sync debouncing logic in resume store ([1ce14a4](https://github.com/JOYCEQL/magic-resume/commit/1ce14a4))
+
+### 🎨 Styles
+
+- Redesign CTASection ([8f8f1fe](https://github.com/JOYCEQL/magic-resume/commit/8f8f1fe))
+
+### ❤️ Contributors
+
+- JOYCEQL <1449239013@qq.com>
 
 ## v2.0.6
 

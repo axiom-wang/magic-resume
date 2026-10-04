@@ -7,7 +7,7 @@ const output=process.env.RESUME_TEST_OUTPUT || '/tmp/magic-resume-link-check';
 const fixture=JSON.parse(await fs.readFile(`${output}/fixture.json`,'utf8'));
 const browser=await chromium.launch();
 try {
- for(const templateId of ['kami','classic','modern','creative','elegant','swiss','minimalist','editorial','left-right','timeline']) {
+ for(const templateId of ['kami','insta360','classic','modern','creative','elegant','swiss','minimalist','editorial','left-right','timeline']) {
   for(const mode of ['long','legacy']) {
    const data=structuredClone(fixture);data.templateId=templateId;
    data.globalSettings.centerSubtitle=false;

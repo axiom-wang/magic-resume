@@ -1,4 +1,5 @@
 import { ensureFontLoaded, getFontFaceCss, normalizeFontFamily } from "@/utils/fonts";
+import { cloneResumeForExport } from "@/utils/resumeLayout";
 
 export const exportResumeToBrowserPrint = async (
   resumeContent: HTMLElement,
@@ -28,11 +29,8 @@ export const exportResumeToBrowserPrint = async (
     iframeWindow.document.open();
 
     const selectedFontFamily = normalizeFontFamily(fontFamily);
-
-    // 与导出保持一致：先确保字体就绪，再克隆，避免按回退字体计算布局
     await ensureFontLoaded(selectedFontFamily);
-
-    const clonedContent = resumeContent.cloneNode(true) as HTMLElement;
+    const clonedContent = cloneResumeForExport(resumeContent, true);
     const pageBackground = backgroundColor || "#ffffff";
     const safeVerticalPageMarginShift = Math.max(
       -pagePadding,
@@ -40,19 +38,6 @@ export const exportResumeToBrowserPrint = async (
     );
     const pagePaddingTop = pagePadding + safeVerticalPageMarginShift;
     const pagePaddingBottom = pagePadding - safeVerticalPageMarginShift;
-    const transformValue = clonedContent.style.transform || "";
-    const match = transformValue.match(/scale\(([\d.]+)\)/);
-    if (match) {
-      const scale = Number(match[1]);
-      if (Number.isFinite(scale) && scale > 0 && scale < 1) {
-        // 打印时使用 zoom 参与分页布局计算，比 transform 更接近最终分页效果
-        clonedContent.style.removeProperty("transform");
-        clonedContent.style.removeProperty("transform-origin");
-        clonedContent.style.setProperty("width", "100%");
-        clonedContent.style.setProperty("zoom", String(scale));
-      }
-    }
-
     clonedContent.style.setProperty("font-family", selectedFontFamily, "important");
     clonedContent.style.setProperty("background", pageBackground, "important");
     clonedContent.style.setProperty("background-color", pageBackground, "important");
@@ -68,7 +53,7 @@ export const exportResumeToBrowserPrint = async (
 
             @page {
               size: A4;
-              margin: 0;
+              margin: ${pagePaddingTop}px ${pagePadding}px ${pagePaddingBottom}px;
               padding: 0;
               background: ${pageBackground};
             }
@@ -104,7 +89,7 @@ export const exportResumeToBrowserPrint = async (
 
             #resume-preview {
               margin: 0 !important;
-              padding: ${pagePaddingTop}px ${pagePadding}px ${pagePaddingBottom}px !important;
+              padding: 0 !important;
               -webkit-box-decoration-break: clone;
               box-decoration-break: clone;
               font-family: ${selectedFontFamily} !important;
@@ -112,7 +97,7 @@ export const exportResumeToBrowserPrint = async (
             }
 
             #print-content {
-              width: 210mm;
+              width: calc(210mm - ${2 * pagePadding}px);
               margin: 0 auto;
               padding: 0;
               background: ${pageBackground};
@@ -128,7 +113,7 @@ export const exportResumeToBrowserPrint = async (
             #resume-preview [style*="min-height"] {
               min-height: 0 !important;
             }
-            
+
             .page-break-line {
               display: none;
             }
