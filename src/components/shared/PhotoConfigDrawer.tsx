@@ -22,7 +22,6 @@ import {
   getBorderRadiusValue,
 } from "@/types/resume";
 import { Textarea } from "@/components/ui/textarea";
-import { useResumeStore } from "@/store/useResumeStore";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_AVATAR = "/avatar.png";
@@ -46,7 +45,6 @@ const PhotoConfigDrawer: React.FC<Props> = ({
   ...props
 }) => {
   const t = useTranslations("photoConfig");
-  const { updateBasicInfo } = useResumeStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(photo);
   const [isDragging, setIsDragging] = useState(false);
@@ -136,11 +134,7 @@ const PhotoConfigDrawer: React.FC<Props> = ({
       setImageUrl(imageData);
       const nextConfig = withPhotoVisible(config);
       setConfig(nextConfig);
-      updateBasicInfo({
-        photo: imageData,
-        photoConfig: nextConfig,
-      });
-      onConfigChange(nextConfig);
+      onPhotoChange(imageData, nextConfig);
     } catch (error) {
       toast.error(t("upload.error"));
     }
@@ -210,10 +204,6 @@ const PhotoConfigDrawer: React.FC<Props> = ({
       setPreviewUrl(proxyUrl);
       const nextConfig = withPhotoVisible(config);
       setConfig(nextConfig);
-      updateBasicInfo({
-        photo: url,
-        photoConfig: nextConfig,
-      });
       onPhotoChange(url, nextConfig);
     } catch (error) {
       toast.error(
@@ -253,10 +243,6 @@ const PhotoConfigDrawer: React.FC<Props> = ({
     if (inputRef.current) {
       inputRef.current.value = "";
     }
-
-    updateBasicInfo({
-      photo: "",
-    });
 
     onPhotoChange("", config);
 

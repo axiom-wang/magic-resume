@@ -21,15 +21,13 @@ const PhotoSelector: React.FC<Props> = ({ className }) => {
     config?: PhotoConfig
   ) => {
     updateBasicInfo({
-      ...basic,
       photo,
-      photoConfig: config,
+      ...(config ? { photoConfig: config } : {}),
     });
   };
 
   const handleConfigChange = (config: PhotoConfig) => {
     updateBasicInfo({
-      ...basic,
       photoConfig: config,
     });
   };
@@ -56,7 +54,6 @@ const PhotoSelector: React.FC<Props> = ({ className }) => {
             className="h-6 px-2"
             onClick={() => {
               updateBasicInfo({
-                ...basic,
                 photoConfig: {
                   ...basic.photoConfig,
                   visible: !(basic.photoConfig?.visible ?? true),
