@@ -1,5 +1,5 @@
 import { ensureFontLoaded, getFontFaceCss, normalizeFontFamily } from "@/utils/fonts";
-import { cloneResumeForExport } from "@/utils/resumeLayout";
+import { cloneResumeForExport, waitForResumeAssets } from "@/utils/resumeLayout";
 
 export const exportResumeToBrowserPrint = async (
   resumeContent: HTMLElement,
@@ -26,6 +26,7 @@ export const exportResumeToBrowserPrint = async (
   }
 
   try {
+    await waitForResumeAssets(resumeContent);
     iframeWindow.document.open();
 
     const selectedFontFamily = normalizeFontFamily(fontFamily);

@@ -7,7 +7,7 @@ import {
   getRemoteFontFaceCss,
   normalizeFontFamily
 } from "@/utils/fonts";
-import { cloneResumeForExport } from "@/utils/resumeLayout";
+import { cloneResumeForExport, waitForResumeAssets } from "@/utils/resumeLayout";
 import { ResumeData } from "@/types/resume";
 import { generateResumeMarkdown, ResumeMarkdownOptions } from "@/utils/markdown";
 
@@ -554,6 +554,7 @@ export const exportToPdf = async ({
       throw new Error(`PDF element #${elementId} not found`);
     }
 
+    await waitForResumeAssets(pdfElement);
     const selectedFontFamily = normalizeFontFamily(fontFamily);
     // Wait for the preview font before copying its layout and inner zoom.
     await ensureFontLoaded(selectedFontFamily);
