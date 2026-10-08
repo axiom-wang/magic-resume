@@ -30,13 +30,15 @@ const SectionTitle = ({
     return menuSections.find((s) => s.id === type)?.title;
   }, [menuSections, type, title]);
 
+  const themeColor = globalSettings?.themeColor || KAMI.brand;
+
   if (!showTitle) return null;
 
   return (
     <div
       className="flex w-full items-baseline justify-between gap-2"
       style={{
-        borderBottom: `1px solid ${KAMI.rule}`,
+        borderBottom: `1px solid ${themeColor}`,
         // 与经典模板一致的标题度量：padding-bottom 8px + margin-bottom = 段落间距
         paddingBottom: "8px",
         marginBottom: `${globalSettings?.paragraphSpacing ?? 12}px`,
@@ -46,7 +48,7 @@ const SectionTitle = ({
         className="font-medium"
         style={{
           fontSize: `${globalSettings?.headerSize || 18}px`,
-          color: KAMI.nearBlack,
+          color: themeColor,
           fontWeight: 500,
         }}
       >
